@@ -1,0 +1,4 @@
+package com.example.auditapp.model
+
+class OtpResponse {
+}

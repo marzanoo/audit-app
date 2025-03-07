@@ -1,0 +1,54 @@
+package com.example.auditapp.adapter
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.example.auditapp.databinding.ListFormAdapterBinding
+import com.example.auditapp.model.Form
+
+class FormAdapter (
+    private val listForm: MutableList<Form>,
+    private val listener: OnItemClickListener
+) : RecyclerView.Adapter<FormAdapter.ViewHolder>() {
+    interface OnItemClickListener {
+        fun onViewClick(dataForm: Form)
+        fun onDeleteClick(dataForm: Form)
+    }
+
+    inner class ViewHolder(val binding: ListFormAdapterBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun onBindItem(dataForm: Form?) {
+            binding.kategori.text = dataForm?.kategori?: "Tidak ada"
+
+            binding.btnHapusForm.setOnClickListener {
+                dataForm?.let { listener.onDeleteClick(it) }
+            }
+
+            binding.btnLihatForm.setOnClickListener {
+                dataForm?.let { listener.onViewClick(it) }
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding =
+            ListFormAdapterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.onBindItem(listForm[position])
+    }
+
+    override fun getItemCount(): Int {
+        return listForm.size
+    }
+
+    fun deleteForm(deletedForm: Form) {
+        val index = listForm.indexOfFirst { it.id == deletedForm.id }
+        if (index != -1) {
+            listForm.removeAt(index)
+            notifyItemRemoved(index)
+        }
+    }
+}

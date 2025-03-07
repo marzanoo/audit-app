@@ -1,0 +1,36 @@
+package com.example.auditapp.model
+
+import com.google.gson.annotations.SerializedName
+import java.io.Serializable
+import java.sql.Timestamp
+
+class LantaiResponse {
+    @field:SerializedName("data") // Sesuaikan dengan struktur JSON dari API
+    @JvmField val lantaiList: List<Lantai>? = null
+
+    @field:SerializedName("message")
+    @JvmField val message: String? = null
+
+    @field:SerializedName("total_lantai")
+    @JvmField val total_lantai: Int? = null
+
+}
+
+data class Lantai(
+    @field:SerializedName("id")
+    val id: Int? = null,
+
+    @field:SerializedName("lantai")
+    val lantai: Int? = null,
+
+    @field:SerializedName("created_at")
+    val created_at: String? = null,
+
+    @field:SerializedName("updated_at")
+    val updated_at: String? = null,
+
+) : Serializable {
+    override fun toString(): String {
+        return "Lantai $lantai"
+    }
+}

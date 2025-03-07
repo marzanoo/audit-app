@@ -1,0 +1,6 @@
+package com.example.auditapp.model
+
+data class VerifikasiOtpRequest(
+    val emaiil: String,
+    val otp: String
+)
