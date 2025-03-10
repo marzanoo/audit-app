@@ -142,7 +142,7 @@ interface ApiServices {
 //    fun updateVariabelFormWithImage(@Header("Authorization") token: String, @Path("id") id: Int, @Body variabelForm: VariabelForm, @Part standarFoto: MultipartBody.Part?): Call<UpdateVariabelFormResponse>
 
     @Multipart
-    @POST("variabel-form/{id}")
+    @PUT("variabel-form/{id}")
     fun updateVariabelFormWithImage(@Header("Authorization") token: String, @Path("id") variabelFormId: Int, @Part("_method") method: RequestBody, @Part("tema_form_id") temaFormId: RequestBody, @Part("variabel") variabel: RequestBody, @Part("standar_variabel") standarVariabel: RequestBody, @Part standarFoto: MultipartBody.Part?): Call<UpdateVariabelFormResponse>
 
     @GET("variabel-form-single/{id}")

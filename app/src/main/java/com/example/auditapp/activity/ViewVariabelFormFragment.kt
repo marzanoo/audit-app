@@ -151,7 +151,11 @@ class ViewVariabelFormFragment : Fragment(), VariabelFormAdapter.OnItemClickList
     }
 
     override fun onEditClick(dataVariabelForm: VariabelForm) {
-        TODO("Not yet implemented")
+        val fragment = EditVariabelFormFragment.newInstance(dataVariabelForm.id)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun setupRecylerView() {

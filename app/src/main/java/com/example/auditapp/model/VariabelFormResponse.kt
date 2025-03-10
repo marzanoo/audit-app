@@ -14,6 +14,10 @@ class VariabelFormResponse {
     @field:SerializedName("data")
     @JvmField
     val data: List<VariabelForm>? = null
+
+    @field:SerializedName("photo_url")
+    @JvmField
+    val photo_url: String? = null
 }
 
 data class UpdateVariabelFormResponse (
