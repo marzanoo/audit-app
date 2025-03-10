@@ -64,6 +64,7 @@ class LoginActivity : AppCompatActivity() {
                                 val role = loginResponse.role ?: 0
                                 val expiresAt = loginResponse.expires_at ?: ""
                                 sessionManager.saveAuthToken(
+                                    loginResponse.id ?: 0,
                                     loginResponse.name ?: "",
                                     loginResponse.email ?: "",
                                     loginResponse.access_token,

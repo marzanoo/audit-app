@@ -10,8 +10,9 @@ class SessionManager(context: Context) {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("USER_PREF", Context.MODE_PRIVATE)
 
-    fun saveAuthToken(name: String, email: String, token: String, expiresAt: String, role: Int) {
+    fun saveAuthToken(id: Int, name: String, email: String, token: String, expiresAt: String, role: Int) {
         with(sharedPreferences.edit()) {
+            putInt("ID", id)
             putString("NAME", name)
             putString("EMAIL", email)
             putString("TOKEN", token)
@@ -27,6 +28,10 @@ class SessionManager(context: Context) {
 
     fun getEmail(): String? {
         return sharedPreferences.getString("EMAIL", "")
+    }
+
+    fun getUserId(): Int {
+        return sharedPreferences.getInt("ID", -1)
     }
 
     fun getAuthToken(): String? {

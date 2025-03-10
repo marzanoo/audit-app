@@ -22,6 +22,7 @@ import com.example.auditapp.model.UpdateAreaResponse
 import com.example.auditapp.model.UpdateFormResponse
 import com.example.auditapp.model.UpdateTemaFormResponse
 import com.example.auditapp.model.UpdateVariabelFormResponse
+import com.example.auditapp.model.UserResponseGetById
 import com.example.auditapp.model.VariabelForm
 import com.example.auditapp.model.VariabelFormResponse
 import com.example.auditapp.model.VerifikasiOtpRequest
@@ -150,5 +151,9 @@ interface ApiServices {
 
     @GET("total-variabel")
     fun getTotalVariabel(@Header("Authorization") token: String): Call<VariabelFormResponse>
+
+    //User
+    @GET("user/{id}")
+    fun getUserById(@Header("Authorization") token: String, @Path("id") id: Int): Call<UserResponseGetById>
 
 }

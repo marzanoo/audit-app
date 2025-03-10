@@ -1,0 +1,136 @@
+package com.example.auditapp.activity
+
+import android.app.DatePickerDialog
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.example.auditapp.R
+import com.example.auditapp.config.ApiServices
+import com.example.auditapp.config.NetworkConfig
+import com.example.auditapp.databinding.FragmentFormAuditorBinding
+import com.example.auditapp.helper.SessionManager
+import com.example.auditapp.model.AreaResponse
+import com.example.auditapp.model.UserResponseGetById
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.util.Calendar
+
+class FormAuditorFragment : Fragment() {
+    private var _binding: FragmentFormAuditorBinding? = null
+    private val binding get() = _binding!!
+    private var userId: Int = 0
+    private lateinit var sessionManager: SessionManager
+    private lateinit var apiServices: ApiServices
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentFormAuditorBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        sessionManager = SessionManager(requireContext())
+        apiServices = NetworkConfig().getServices()
+        getUserById()
+        getArea()
+
+        binding.backBtn.setOnClickListener {
+            navigateToHomeAuditor()
+        }
+
+        binding.btnBatal.setOnClickListener {
+            navigateToHomeAuditor()
+        }
+
+        binding.etTanggal.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+                val formattedDate = "${selectedYear}-${selectedMonth + 1}-${selectedDay}"
+                binding.etTanggal.setText(formattedDate)
+            }, year, month, day)
+
+            datePickerDialog.show()
+        }
+    }
+
+    private fun getArea() {
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak tersedia", Toast.LENGTH_SHORT).show()
+            return
+        }
+        apiServices.getArea("Bearer $token").enqueue(object : Callback<AreaResponse> {
+            override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
+                if (response.isSuccessful) {
+                    val areaList = response.body()?.data ?: emptyList()
+                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, areaList)
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    binding.spinArea.adapter = adapter
+                } else {
+                    Toast.makeText(requireContext(), "Gagal mengambil data Area: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AreaResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun navigateToHomeAuditor() {
+        val homeAuditorFragment = HomeAuditorFragment()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, homeAuditorFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun getUserById() {
+        userId = sessionManager.getUserId()
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak tersedia", Toast.LENGTH_SHORT).show()
+            return
+        }
+        apiServices.getUserById("Bearer $token", userId).enqueue(object :
+            Callback<UserResponseGetById> {
+            override fun onResponse(
+                call: Call<UserResponseGetById>,
+                response: Response<UserResponseGetById>
+            ) {
+                if (response.isSuccessful) {
+                    val userResponse = response.body()
+                    binding.edtNama.setText(userResponse?.data?.name)
+                } else {
+                    Toast.makeText(requireContext(), "Gagal mengambil data user", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+
+            override fun onFailure(call: Call<UserResponseGetById>, t: Throwable) {
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+}

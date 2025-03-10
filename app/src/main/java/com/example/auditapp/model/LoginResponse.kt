@@ -27,4 +27,7 @@ class LoginResponse {
 
     @field:SerializedName("role")
     val role: Int? = null
+
+    @field:SerializedName("id")
+    val id: Int? = null
 }

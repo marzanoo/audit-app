@@ -56,4 +56,8 @@ data class Area(
 
     @field:SerializedName("updated_at")
     val updated_at: String? = null
-)
+) {
+    override fun toString(): String {
+        return "Area $area"
+    }
+}

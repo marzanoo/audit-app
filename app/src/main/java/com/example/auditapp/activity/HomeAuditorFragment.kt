@@ -47,7 +47,7 @@ class HomeAuditorFragment : Fragment() {
             }
 
             binding.boxFormAudit.setOnClickListener {
-                val fragment = ListFormAuditorFragment()
+                val fragment = FormAuditorFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)

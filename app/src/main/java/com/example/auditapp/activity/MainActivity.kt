@@ -1,6 +1,5 @@
 package com.example.auditapp.activity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -78,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 3 -> when (menuItem.itemId) {
                     R.id.navigation_home -> HomeAuditorFragment()
-                    R.id.navigation_form -> ListFormAuditorFragment()
+                    R.id.navigation_form -> FormAuditorFragment()
                     else -> null
                 }
                 else -> null
