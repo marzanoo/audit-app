@@ -50,3 +50,24 @@ data class VariabelForm(
     val created_at: String? = null,
     val updated_at: String? = null
 )
+
+data class VariabelFormAnswer(
+    @field:SerializedName("id")
+    val id: Int? = null,
+
+    @field:SerializedName("tema_form_id")
+    val tema_form_id: Int? = null,
+
+    @field:SerializedName("variabel")
+    val variabel: String? = null,
+
+    @field:SerializedName("standar_variabel")
+    val standar_variabel: String? = null,
+
+    @field:SerializedName("standar_foto")
+    val standar_foto: String? = null,
+
+    val created_at: String? = null,
+    val updated_at: String? = null,
+    val listDetailFoto: List<DetailFoto>
+)

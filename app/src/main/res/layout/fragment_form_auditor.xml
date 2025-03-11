@@ -57,10 +57,11 @@
                 android:id="@+id/edtNama"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
+                android:paddingStart="14dp"
+                android:enabled="false"
+                android:hint="Masukkan Nama"
+                android:paddingEnd="14dp"
                 android:background="@drawable/rounder_border"
-                android:paddingLeft="14dp"
-                android:inputType="text"
-                android:editable="false"
                 android:layout_marginBottom="6dp"/>
         </LinearLayout>
         <LinearLayout
@@ -83,6 +84,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:hint="Pilih Tanggal"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:focusable="false"
                 android:clickable="true"
                 android:layout_marginBottom="6dp"/>

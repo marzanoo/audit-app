@@ -31,5 +31,20 @@ data class TemaForm(
     val tema: String? = null,
 
     val created_at: String? = null,
-    val updated_at: String? = null
+    val updated_at: String? = null,
+)
+
+data class TemaFormAnswer(
+    @field:SerializedName("id")
+    val id: Int? = null,
+
+    @field:SerializedName("form_id")
+    val form_id: Int? = null,
+
+    @field:SerializedName("tema")
+    val tema: String? = null,
+
+    val created_at: String? = null,
+    val updated_at: String? = null,
+    val listVariabel: List<VariabelFormAnswer>
 )

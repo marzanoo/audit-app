@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Kategori Form -->
+        <TextView
+            android:id="@+id/tvKategori"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kategori: Sort/Ringkas"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <!-- Tema -->
+        <TextView
+            android:id="@+id/tvTema"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tema: 1.1 Perlengkapan yang tidak diperlukan"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Variabel -->
+        <TextView
+            android:id="@+id/tvVariabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Variabel: Barang/ATK yang rusak"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Standar Foto -->
+        <ImageView
+            android:id="@+id/ivStandarFoto"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            android:src="@drawable/sample_image"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Score -->
+        <TextView
+            android:id="@+id/tvScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score: 8.5"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Upload Foto -->
+        <Button
+            android:id="@+id/btnUploadFoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upload Foto"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/tvUploadedFoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="image123.jpg"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+</ScrollView>

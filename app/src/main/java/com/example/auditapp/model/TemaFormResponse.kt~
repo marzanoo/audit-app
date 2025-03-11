@@ -2,45 +2,49 @@ package com.example.auditapp.model
 
 import com.google.gson.annotations.SerializedName
 
-class FormResponse {
+class TemaFormResponse {
     @field:SerializedName("message")
     @JvmField
     val message: String? = null
 
     @field:SerializedName("data")
     @JvmField
-    val data: List<Form>? = null
+    val data: List<TemaForm>? = null
 }
 
-data class UpdateFormResponse (
+data class UpdateTemaFormResponse (
     @field:SerializedName("message")
     val message: String? = null,
 
     @field:SerializedName("data")
-    val data: Form? = null
+    val data: TemaForm? = null,
 )
 
-data class Form(
+data class TemaForm(
     @field:SerializedName("id")
     val id: Int? = null,
 
-    @field:SerializedName("kategori")
-    val kategori: String? = null,
+    @field:SerializedName("form_id")
+    val form_id: Int? = null,
+
+    @field:SerializedName("tema")
+    val tema: String? = null,
 
     val created_at: String? = null,
     val updated_at: String? = null,
-
 )
 
-data class FormAnswer(
+data class TemaFormAnswer(
     @field:SerializedName("id")
     val id: Int? = null,
 
-    @field:SerializedName("kategori")
-    val kategori: String? = null,
+    @field:SerializedName("form_id")
+    val form_id: Int? = null,
+
+    @field:SerializedName("tema")
+    val tema: String? = null,
 
     val created_at: String? = null,
     val updated_at: String? = null,
-
-    val temaList: List<TemaFormAnswer>
+    val listVariabel: List<VariabelForm>
 )

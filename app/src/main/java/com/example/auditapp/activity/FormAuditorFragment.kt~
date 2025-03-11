@@ -2,6 +2,7 @@ package com.example.auditapp.activity
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,11 @@ import com.example.auditapp.config.ApiServices
 import com.example.auditapp.config.NetworkConfig
 import com.example.auditapp.databinding.FragmentFormAuditorBinding
 import com.example.auditapp.helper.SessionManager
+import com.example.auditapp.model.Area
 import com.example.auditapp.model.AreaResponse
+import com.example.auditapp.model.AuditAnswerItem
+import com.example.auditapp.model.AuditAnswerResponse
+import com.example.auditapp.model.AuditAnswerResponseUpdate
 import com.example.auditapp.model.UserResponseGetById
 import retrofit2.Call
 import retrofit2.Callback
@@ -42,6 +47,7 @@ class FormAuditorFragment : Fragment() {
         sessionManager = SessionManager(requireContext())
         apiServices = NetworkConfig().getServices()
         getUserById()
+        getArea()
 
         binding.backBtn.setOnClickListener {
             navigateToHomeAuditor()
@@ -49,6 +55,10 @@ class FormAuditorFragment : Fragment() {
 
         binding.btnBatal.setOnClickListener {
             navigateToHomeAuditor()
+        }
+
+        binding.btnMulai.setOnClickListener {
+            mulaiAudit()
         }
 
         binding.etTanggal.setOnClickListener {
@@ -64,6 +74,60 @@ class FormAuditorFragment : Fragment() {
 
             datePickerDialog.show()
         }
+    }
+
+    private fun mulaiAudit() {
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak tersedia", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val auditorName = userId
+        val areaSelected = binding.spinArea.selectedItem as? Area
+        val tanggal = binding.etTanggal.text.toString().trim()
+
+        val areaId = 
+        if (auditorName == 0 || areaId == -1 || tanggal.isEmpty()) {
+            Toast.makeText(requireContext(), "Mohon untuk isi semua kolom", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val auditAnswer = AuditAnswerItem(
+            tanggal = tanggal,
+            auditorId = auditorName,
+            areaId = areaId
+        )
+
+        apiServices.createAuditAnswer("Bearer $token", auditAnswer).enqueue(object :
+            Callback<AuditAnswerResponseUpdate> {
+            override fun onResponse(
+                call: Call<AuditAnswerResponseUpdate>,
+                response: Response<AuditAnswerResponseUpdate>
+            ) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    Toast.makeText(requireContext(), "Audit berhasil dimulai", Toast.LENGTH_SHORT).show()
+                    navigateToIsiFormAuditor(dataAuditAnswer = responseBody?.auditAnswer ?: AuditAnswerItem())
+                } else {
+                    Toast.makeText(requireContext(), "Gagal mulai audit", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AuditAnswerResponseUpdate>, t: Throwable) {
+                t.printStackTrace() // Cetak error di log
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun navigateToIsiFormAuditor(dataAuditAnswer: AuditAnswerItem) {
+        Log.d("FormAuditorFragment", "Navigasi ke IsiFormAuditorFragment dipanggil")
+        val fragment = IsiFormAuditorFragment.newInstance(dataAuditAnswer.id ?: 0)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun getArea() {

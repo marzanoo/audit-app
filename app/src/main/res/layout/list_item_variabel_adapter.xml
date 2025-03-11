@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@android:color/white">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="• Standar"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:paddingBottom="4dp" />
+
+    <TextView
+        android:id="@+id/tvStandarVariabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tidak ada Barang/ATK yang rusak..."
+        android:textSize="12sp"
+        android:paddingBottom="8dp" />
+
+    <ImageView
+        android:id="@+id/imgVariabel"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:background="@android:color/darker_gray"
+        android:contentDescription="Gambar standar" />
+
+    <TextView
+        android:id="@+id/tvVariabelDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ada Barang/ATK yang rusak..."
+        android:textSize="12sp"
+        android:layout_marginTop="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <Button
+            android:id="@+id/btnUpload"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:backgroundTint="@color/black"
+            android:text="Ambil Foto" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewFoto"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"/>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/etScore"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:hint="Score"
+        android:textSize="12sp"
+        android:inputType="number"
+        android:padding="8dp" />
+</LinearLayout>
