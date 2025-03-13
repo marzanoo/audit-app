@@ -2,65 +2,79 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    android:layout_margin="8dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvKategoriForm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Kategori Form"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/tvTemaForm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1.1 Perlengkapan yang tidak diperlukan"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="6dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Standar"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="8dp"/>
+
+    <TextView
+        android:id="@+id/tvStandarVariabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tidak ada barang/ATK yang rusak..."
+        android:textSize="14sp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="125dp"
+        android:layout_height="125dp"
+        android:id="@+id/iv_StandarFoto"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/grey_slate2"/>
+
+    <TextView
+        android:id="@+id/tvVariabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ada barang/ATK yang rusak"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="4dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:background="@drawable/rounder_border"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginStart="8dp">
 
-        <LinearLayout
+        <Button
+            android:id="@+id/btnAmbilFoto"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Ambil Foto"
+            android:backgroundTint="@color/black"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_foto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:id="@+id/tvArea"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:textSize="20sp"
-                android:maxLines="2"
-                android:text="Area"
-                android:textAppearance="@style/TextAppearance.AppCompat"/>
-            <TextView
-                android:id="@+id/area"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="18sp"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:textAppearance="@style/TextAppearance.AppCompat"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:id="@+id/tvLantai"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:textSize="20sp"
-                android:maxLines="2"
-                android:text="Lantai"
-                android:textAppearance="@style/TextAppearance.AppCompat"/>
-            <TextView
-                android:id="@+id/lantai"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="18sp"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:textAppearance="@style/TextAppearance.AppCompat"/>
-        </LinearLayout>
+            android:orientation="horizontal"/>
     </LinearLayout>
-
 </LinearLayout>
