@@ -6,6 +6,7 @@ import com.example.auditapp.model.AreaResponse
 import com.example.auditapp.model.AuditAnswerItem
 import com.example.auditapp.model.AuditAnswerResponse
 import com.example.auditapp.model.AuditAnswerResponseUpdate
+import com.example.auditapp.model.DetailAuditAnswerResponse
 import com.example.auditapp.model.Form
 import com.example.auditapp.model.FormResponse
 import com.example.auditapp.model.KaryawanResponse
@@ -162,5 +163,8 @@ interface ApiServices {
     //Audit Answer
     @POST("audit-answer-insert")
     fun createAuditAnswer(@Header("Authorization") token: String, @Body auditAnswer: AuditAnswerItem): Call<AuditAnswerResponseUpdate>
+
+    @GET("detail-audit-answer/{id}")
+    fun getDetailAuditAnswer(@Header("Authorization") token: String, @Path("id") id: Int): Call<DetailAuditAnswerResponse>
 
 }

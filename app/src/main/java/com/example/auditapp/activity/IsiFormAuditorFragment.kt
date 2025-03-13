@@ -1,52 +1,93 @@
 package com.example.auditapp.activity
 
+import android.Manifest
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.auditapp.R
 import com.example.auditapp.adapter.FormAnswerAdapter
+import com.example.auditapp.adapter.ListFormAuditorAdapter
+import com.example.auditapp.config.ApiServices
+import com.example.auditapp.config.NetworkConfig
 import com.example.auditapp.databinding.FragmentIsiFormAuditorBinding
+import com.example.auditapp.helper.SessionManager
+import com.example.auditapp.model.DetailAuditAnswer
+import com.example.auditapp.model.DetailAuditAnswerResponse
+import com.example.auditapp.model.DetailFoto
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.File
 
-class IsiFormAuditorFragment : Fragment(), FormAnswerAdapter, SwipeRefreshLayout.OnRefreshListener {
+class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, ListFormAuditorAdapter.OnItemClickListener {
     private var _binding: FragmentIsiFormAuditorBinding? = null
     private val binding get() = _binding!!
     private var auditAnswerId: Int = 0
-    private lateinit var formAnswerAdapter: FormAnswerAdapter
+    private val listAuditAnswer = mutableListOf<DetailAuditAnswer>()
+    private lateinit var auditAnswerAdapter: ListFormAuditorAdapter
+    private lateinit var sessionManager: SessionManager
+    private lateinit var apiServices: ApiServices
+    private var imageUri: Uri? = null
+    private var selectedPosition: Int = -1
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentIsiFormAuditorBinding.inflate(inflater, container, false)
-        return binding.root
+    // Permission request launcher
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Permission granted, take picture
+            if (selectedPosition != -1) {
+                openCamera()
+            }
+        } else {
+            Toast.makeText(requireContext(), "Izin kamera diperlukan untuk mengambil foto", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    override fun onRefresh() {
-        TODO("Not yet implemented")
-    }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success && imageUri != null) {
+            if (selectedPosition != -1) {
+                // Create a new DetailFoto object with the URI
+                val newPhoto = DetailFoto(
+                    id = 0, // You might need to generate a unique ID
+                    detail_audit_answer_id = listAuditAnswer[selectedPosition].id ?: 0,
+                    image_path = imageUri.toString(),
+                    uri = imageUri
+                )
 
-        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
-        bottomNav.visibility = View.GONE
+                // Add the photo to the list if it doesn't exist yet
+                if (listAuditAnswer[selectedPosition].listDetailFoto == null) {
+                    listAuditAnswer[selectedPosition].listDetailFoto = mutableListOf()
+                }
 
-    }
+                listAuditAnswer[selectedPosition].listDetailFoto?.add(newPhoto)
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-
-        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
-        bottomNav.visibility = View.VISIBLE
+                // Update the adapter
+                auditAnswerAdapter.notifyItemChanged(selectedPosition)
+            }
+        } else {
+            Toast.makeText(requireContext(), "Gagal mengambil gambar", Toast.LENGTH_SHORT).show()
+        }
     }
 
     companion object {
         private const val ARG_AUDITANSWER_ID = "auditAnswerId"
+        private const val CAMERA_PERMISSION_REQUEST = 101
         fun newInstance(auditAnswerId: Int): Fragment {
             val fragment = IsiFormAuditorFragment()
             val args = Bundle()
@@ -59,7 +100,117 @@ class IsiFormAuditorFragment : Fragment(), FormAnswerAdapter, SwipeRefreshLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            auditAnswerId = it.getInt(ARG_AUDITANSWER_ID, 0)
+            auditAnswerId = it.getInt(ARG_AUDITANSWER_ID)
         }
     }
+
+    private fun getDetailAuditAnswer(auditAnswerId: Int) {
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak valid", Toast.LENGTH_SHORT).show()
+            return
+        }
+        apiServices.getDetailAuditAnswer("Bearer $token", auditAnswerId).enqueue(object :
+            Callback<DetailAuditAnswerResponse> {
+            override fun onResponse(
+                call: Call<DetailAuditAnswerResponse>,
+                response: Response<DetailAuditAnswerResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val detailAuditAnswerResponse = response.body()
+                    detailAuditAnswerResponse?.data?.let { detailAuditAnswer ->
+                        listAuditAnswer.clear()
+                        listAuditAnswer.addAll(detailAuditAnswer.filterNotNull())
+                        auditAnswerAdapter.notifyDataSetChanged()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Gagal mengambil data audit answer", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<DetailAuditAnswerResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Log.e("IsiFormAuditorFragment", "Network Error: ${t.message}")
+            }
+        })
+    }
+
+    private fun openCamera() {
+        val file = File(requireContext().cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+        imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", file)
+        takePicture.launch(imageUri)
+    }
+
+
+    override fun onTakePictureClick(position: Int) {
+        selectedPosition = position
+
+        // Check for camera permission
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            openCamera()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    override fun onScoreChanged(position: Int, score: Int) {
+        if (position < listAuditAnswer.size) {
+            listAuditAnswer[position].score = score
+            // You may want to update the backend with the new score
+        }
+    }
+
+    private fun setupRecylerView() {
+        auditAnswerAdapter = ListFormAuditorAdapter(listAuditAnswer, this)
+        binding.recyclerViewForm.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = auditAnswerAdapter
+        }
+
+    }
+
+    override fun onRefresh() {
+        getDetailAuditAnswer(auditAnswerId)
+        binding.swipeRefreshLayout.isRefreshing = false
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = FragmentIsiFormAuditorBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
+        bottomNav.visibility = View.GONE
+        sessionManager = SessionManager(requireContext())
+        apiServices = NetworkConfig().getServices()
+
+        val swipeRefresh = binding.swipeRefreshLayout
+        swipeRefresh.setOnRefreshListener(this)
+
+        setupRecylerView()
+        getDetailAuditAnswer(auditAnswerId)
+
+        binding.btnSimpan.setOnClickListener {
+            saveAuditData()
+        }
+    }
+
+    private fun saveAuditData() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
+        bottomNav.visibility = View.VISIBLE
+
+    }
+
 }

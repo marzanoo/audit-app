@@ -1,7 +1,9 @@
 package com.example.auditapp.model
 
+import android.net.Uri
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import java.util.Date
+
 
 class AuditAnswerResponse {
     @field:SerializedName("message")
@@ -30,6 +32,46 @@ class AuditAnswerResponseUpdate {
     @JvmField
     val detailAuditAnswer: List<DetailAuditAnswerItem?>? = null
 }
+
+class DetailAuditAnswerResponse {
+    @field:SerializedName("data")
+    @JvmField
+    val data: List<DetailAuditAnswer?>? = null
+}
+
+data class DetailAuditAnswer(
+    @field:SerializedName("id")
+    val id: Int? = null,
+
+    @field:SerializedName("audit_answer_id")
+    val auditAnswerId: Int? = null,
+
+    @field:SerializedName("variabel_form_id")
+    val variabelFormId: Int? = null,
+
+    @field:SerializedName("score")
+    var score: Int? = null,
+
+    @field:SerializedName("standar_variabel")
+    val standarVariabel: String? = null,
+
+    @field:SerializedName("variabel")
+    val variabel: String? = null,
+
+    @field:SerializedName("standar_foto")
+    val standarFoto: String? = null,
+
+    var listDetailFoto: MutableList<DetailFoto>? = null,
+
+    @field:SerializedName("tema")
+    val tema: String? = null,
+
+    @field:SerializedName("kategori")
+    val kategori: String? = null,
+
+    var imageUri: Uri? = null,
+
+)
 
 data class AuditAnswerItem(
     @field:SerializedName("id")

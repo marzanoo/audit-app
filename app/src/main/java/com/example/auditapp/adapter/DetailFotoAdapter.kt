@@ -20,11 +20,23 @@ class DetailFotoAdapter (
     inner class ViewHolder(val binding: ListItemFotoAdapterBinding) :
         RecyclerView.ViewHolder(binding.root) {
             fun onBindItem(dataDetailFoto: DetailFoto) {
-                Glide.with(binding.root.context)
-                    .load(dataDetailFoto.image_path)
-                    .placeholder(R.drawable.logo_wag)
-                    .into(binding.imgFoto)
-
+                if (dataDetailFoto.uri != null) {
+                    // Load from local URI
+                    Glide.with(binding.root.context)
+                        .load(dataDetailFoto.uri)
+                        .placeholder(R.drawable.logo_wag)
+                        .error(R.drawable.logo_wag)
+                        .into(binding.imgFoto)
+                } else {
+                    // Load from remote URL
+                    val BASE_URL = "http://192.168.0.103:8000/storage/"
+                    val imageUrl = BASE_URL + dataDetailFoto.image_path
+                    Glide.with(binding.root.context)
+                        .load(imageUrl)
+                        .placeholder(R.drawable.logo_wag)
+                        .error(R.drawable.logo_wag)
+                        .into(binding.imgFoto)
+                }
                 binding.btnDelete.setOnClickListener {
                     listener.onDeleteClick(dataDetailFoto)
                     deleteItem(dataDetailFoto)
