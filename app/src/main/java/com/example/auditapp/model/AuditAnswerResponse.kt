@@ -10,6 +10,10 @@ class AuditAnswerResponse {
     @JvmField
     val message: String? = null
 
+    @field:SerializedName("total")
+    @JvmField
+    val total: Int? = null
+
     @field:SerializedName("audit_answer")
     @JvmField
     val auditAnswer: List<AuditAnswerItem?>? = null
@@ -50,7 +54,7 @@ data class DetailAuditAnswer(
     val variabelFormId: Int? = null,
 
     @field:SerializedName("score")
-    var score: Int? = null,
+    var score: Int?,
 
     @field:SerializedName("standar_variabel")
     val standarVariabel: String? = null,
@@ -66,12 +70,14 @@ data class DetailAuditAnswer(
     @field:SerializedName("tema")
     val tema: String? = null,
 
+    var tertuduh: String? = null,
+
     @field:SerializedName("kategori")
     val kategori: String? = null,
 
     var imageUri: Uri? = null,
 
-)
+    )
 
 data class AuditAnswerItem(
     @field:SerializedName("id")

@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -11,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -28,11 +30,19 @@ import com.example.auditapp.helper.SessionManager
 import com.example.auditapp.model.DetailAuditAnswer
 import com.example.auditapp.model.DetailAuditAnswerResponse
 import com.example.auditapp.model.DetailFoto
+import com.example.auditapp.model.DetailFotoResponseUpdate
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.io.FileOutputStream
 
 class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, ListFormAuditorAdapter.OnItemClickListener {
     private var _binding: FragmentIsiFormAuditorBinding? = null
@@ -201,8 +211,154 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
         }
     }
 
+    private fun navToHomeAuditor() {
+        val fragment = HomeAuditorFragment()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun saveAuditData() {
-        TODO("Not yet implemented")
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak valid", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        binding.progressBar.visibility = View.VISIBLE
+
+        val totalItems = listAuditAnswer.size
+        var completedItems = 0
+        var failedItems = 0
+
+        listAuditAnswer.forEach { detailAuditAnswer ->
+            val score = detailAuditAnswer.score ?: 0
+
+            val tertuduh = detailAuditAnswer.tertuduh
+
+            apiServices.submitAnswer("Bearer $token", auditAnswerId, detailAuditAnswer.id?: 0, score, tertuduh).enqueue(
+                object : Callback<Any> {
+                    override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                        if (response.isSuccessful) {
+                            uploadPhotos(detailAuditAnswer, token)
+                        } else {
+                            Toast.makeText(requireContext(), "Gagal menyimpan data: ${response.message()}", Toast.LENGTH_SHORT).show()
+                            Log.e("IsiFormAuditorFragment", "API Error: ${response.errorBody()?.string()}")
+                        }
+
+                        completedItems++
+                        checkProgress(completedItems, failedItems, totalItems)
+                    }
+
+                    override fun onFailure(call: Call<Any>, t: Throwable) {
+                        failedItems++
+                        completedItems++
+                        checkProgress(completedItems, failedItems, totalItems)
+                        Log.e("IsiFormAuditorFragment", "Submit Error: ${t.message}")
+                    }
+                })
+        }
+    }
+
+    private fun uploadPhotos(detailAuditAnswer: DetailAuditAnswer, token: String) {
+        val photos = detailAuditAnswer.listDetailFoto ?: return
+
+        photos.forEach { photo ->
+            if ((photo.id ?: 0) > 0 || photo.uri == null ) return@forEach
+
+            val imageFile = createTempFileFromUri(photo.uri!!)
+            if (imageFile != null) {
+                val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+                val imagePart = MultipartBody.Part.createFormData("image_path", imageFile.name, requestFile)
+                val detailAuditAnswerIdBody = detailAuditAnswer.id.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+
+                apiServices.uploadPhoto("Bearer $token", detailAuditAnswerIdBody, imagePart).enqueue(
+                    object : Callback<DetailFotoResponseUpdate> {
+                        override fun onResponse(
+                            call: Call<DetailFotoResponseUpdate>,
+                            response: Response<DetailFotoResponseUpdate>
+                        ) {
+                            Log.d("IsiFormAuditorFragment", "Response code: ${response.code()}")
+                            Log.d("IsiFormAuditorFragment", "Response body: ${response.body()}")
+                            if (response.isSuccessful) {
+                                val responseData = response.body()
+                                responseData?.data?.let { uploadedPhoto ->
+                                    photo.id = uploadedPhoto.id
+                                    photo.image_path = uploadedPhoto.image_path
+                                    val position = listAuditAnswer.indexOf(detailAuditAnswer)
+                                    auditAnswerAdapter.notifyItemChanged(position)
+                                }
+                                Toast.makeText(requireContext(), "Foto berhasil diunggah", Toast.LENGTH_SHORT).show()
+                                navToHomeAuditor()
+                            } else {
+                                Toast.makeText(requireContext(), "Gagal mengunggah foto", Toast.LENGTH_SHORT).show()
+                                Log.e("IsiFormAuditorFragment", "Error body: ${response.errorBody()?.string()}")
+                            }
+                        }
+
+                        override fun onFailure(call: Call<DetailFotoResponseUpdate>, t: Throwable) {
+                            Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                            Log.e("IsiFormAuditorFragment", "Network Error: ${t.message}")
+                        }
+                    })
+            } else {
+                Toast.makeText(requireContext(), "Gagal mengunggah foto", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun createTempFileFromUri(uri: Uri): File? {
+        try {
+            val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, uri)
+            val file = File(requireContext().cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+            val outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+            outputStream.flush()
+            outputStream.close()
+            return file
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("IsiFormAuditorFragment", "Error: ${e.message}")
+            return null
+        }
+    }
+
+//    private fun getRealPathFromURI(uri: Uri): String? {
+//        val projection = arrayOf(MediaStore.Images.Media.DATA)
+//        val cursor = requireActivity().contentResolver.query(uri, projection, null, null, null)
+//        return cursor?.use {
+//            val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+//            it.moveToFirst()
+//            it.getString(columnIndex)
+//        } ?: run {
+//            // If cursor is null, try to get path directly from URI (works for file:// URIs)
+//            uri.path
+//        }
+//    }
+
+    private fun checkProgress(completed: Int, failed: Int, total: Int) {
+        if (completed == total) {
+            // All items processed, hide loading
+            binding.progressBar.visibility = View.GONE
+
+            if (failed > 0) {
+                Toast.makeText(
+                    requireContext(),
+                    "Selesai dengan $failed item gagal",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Berhasil menyimpan semua data",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                // Refresh the data to show the updated values
+                getDetailAuditAnswer(auditAnswerId)
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -210,7 +366,5 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
         _binding = null
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
         bottomNav.visibility = View.VISIBLE
-
     }
-
 }

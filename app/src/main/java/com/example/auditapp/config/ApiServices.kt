@@ -7,6 +7,8 @@ import com.example.auditapp.model.AuditAnswerItem
 import com.example.auditapp.model.AuditAnswerResponse
 import com.example.auditapp.model.AuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailAuditAnswerResponse
+import com.example.auditapp.model.DetailFotoResponse
+import com.example.auditapp.model.DetailFotoResponseUpdate
 import com.example.auditapp.model.Form
 import com.example.auditapp.model.FormResponse
 import com.example.auditapp.model.KaryawanResponse
@@ -36,6 +38,9 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.Field
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -164,7 +169,19 @@ interface ApiServices {
     @POST("audit-answer-insert")
     fun createAuditAnswer(@Header("Authorization") token: String, @Body auditAnswer: AuditAnswerItem): Call<AuditAnswerResponseUpdate>
 
+    @GET("audit-answer-auditor/{id}")
+    fun getAuditAnswerAuditor(@Header("Authorization") token: String, @Path("id") id: Int): Call<AuditAnswerResponse>
+
+    //Detail Audit Answer
     @GET("detail-audit-answer/{id}")
     fun getDetailAuditAnswer(@Header("Authorization") token: String, @Path("id") id: Int): Call<DetailAuditAnswerResponse>
+
+    @FormUrlEncoded
+    @POST("detail-audit-answer/{auditAnswerId}/detail/{detailAuditAnswerId}")
+    fun submitAnswer(@Header("Authorization") token: String, @Path("auditAnswerId") auditAnswerId: Int, @Path("detailAuditAnswerId") detailAuditAnswerId: Int, @Field("score") score: Int, @Field("tertuduh") tertuduh: String?): Call<Any>
+
+    @Multipart
+    @POST("detail-audit-answer/upload-photo")
+    fun uploadPhoto(@Header("Authorization") token: String, @Part("detail_audit_answer_id") detailAuditAnswerId: RequestBody, @Part image_path: MultipartBody.Part): Call<DetailFotoResponseUpdate>
 
 }

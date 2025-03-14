@@ -25,13 +25,13 @@ class DetailFotoResponseUpdate {
 
 data class DetailFoto (
     @field:SerializedName("id")
-    val id: Int? = null,
+    var id: Int? = null,
 
     @field:SerializedName("detail_audit_answer_id")
-    val detail_audit_answer_id: Int? = null,
+    val detail_audit_answer_id: Int? = null,    
 
     @field:SerializedName("image_path")
-    val image_path: String? = null,
+    var image_path: String? = null,
 
     var uri: Uri? = null,
 

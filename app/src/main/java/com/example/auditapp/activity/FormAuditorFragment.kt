@@ -110,7 +110,8 @@ class FormAuditorFragment : Fragment() {
                     Toast.makeText(requireContext(), "Audit berhasil dimulai", Toast.LENGTH_SHORT).show()
                     navigateToIsiFormAuditor(dataAuditAnswer = responseBody?.auditAnswer ?: AuditAnswerItem())
                 } else {
-                    Toast.makeText(requireContext(), "Gagal mulai audit", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Gagal mulai audit: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    Log.e("FormAuditorFragment", "Gagal mulai audit: ${response.errorBody()?.string()}")
                 }
             }
 

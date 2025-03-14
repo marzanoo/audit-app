@@ -12,6 +12,7 @@ import com.example.auditapp.config.NetworkConfig
 import com.example.auditapp.databinding.FragmentHomeAuditorBinding
 import com.example.auditapp.helper.SessionManager
 import com.example.auditapp.model.AreaResponse
+import com.example.auditapp.model.AuditAnswerResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -56,9 +57,40 @@ class HomeAuditorFragment : Fragment() {
 
             binding.textViewFullname.text = name
             getTotalArea()
+            getTotalAudit()
         } catch (e: Exception) {
             Log.e("HomeAuditorFragment", "Error setting role text", e)
         }
+    }
+
+    private fun getTotalAudit() {
+        val token = sessionManager.getAuthToken()
+        val userId = sessionManager.getUserId()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak valid", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val apiServices = NetworkConfig().getServices()
+        apiServices.getAuditAnswerAuditor("Bearer $token", userId).enqueue(object :
+            Callback<AuditAnswerResponse> {
+            override fun onResponse(
+                call: Call<AuditAnswerResponse>,
+                response: Response<AuditAnswerResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val auditAnswerResponse = response.body()
+                    val totalAudit = auditAnswerResponse?.total ?: 0
+                    binding.textTotalAudit.text = totalAudit.toString() + " Selesai"
+                } else {
+                    Toast.makeText(requireContext(), "Fetching Data Error: ${response.message()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AuditAnswerResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        })
     }
 
     private fun getTotalArea(): Int {

@@ -47,8 +47,40 @@ class ListFormAuditorAdapter(
                         listener.onScoreChanged(adapterPosition, score)
                     }
                 }
+                private val tertuduhTextWatcher = object : TextWatcher {
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {
+
+                    }
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+
+                    }
+
+                    override fun afterTextChanged(s: Editable?) {
+                        val position = adapterPosition
+                        if (position != RecyclerView.NO_POSITION) {
+                            listAuditAnswer[position].tertuduh = s.toString()
+                        }
+                    }
+                }
                 fun onBindItem(dataDetailAuditAnswer: DetailAuditAnswer) {
                     binding.etScore.removeTextChangedListener(scoreTextWatcher)
+                    val etTertuduh = binding.etTertuduh
+                    if (etTertuduh != null) {
+                        etTertuduh.removeTextChangedListener(tertuduhTextWatcher)
+                        etTertuduh.setText(dataDetailAuditAnswer.tertuduh ?: "")
+                        etTertuduh.addTextChangedListener(tertuduhTextWatcher)
+                    }
                     binding.tvKategoriForm.text = dataDetailAuditAnswer.kategori
                     binding.tvTemaForm.text = dataDetailAuditAnswer.tema
                     binding.tvStandarVariabel.text = dataDetailAuditAnswer.standarVariabel
@@ -90,6 +122,11 @@ class ListFormAuditorAdapter(
                 fun unbind() {
                     // Remove text watcher when ViewHolder is recycled
                     binding.etScore.removeTextChangedListener(scoreTextWatcher)
+
+                    val etTertuduh = binding.etTertuduh
+                    if (etTertuduh != null) {
+                        etTertuduh.removeTextChangedListener(tertuduhTextWatcher)
+                    }
                 }
             }
 
