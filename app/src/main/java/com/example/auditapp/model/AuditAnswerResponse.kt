@@ -16,7 +16,7 @@ class AuditAnswerResponse {
 
     @field:SerializedName("audit_answer")
     @JvmField
-    val auditAnswer: List<AuditAnswerItem?>? = null
+    val auditAnswer: List<AuditAnswerItem>? = null
 
     @field:SerializedName("detail_audit_answer")
     @JvmField
@@ -95,7 +95,8 @@ data class AuditAnswerItem(
     val totalScore: Int? = null,
 
     val created_at: String? = null,
-    val updated_at: String? = null
+    val updated_at: String? = null,
+    val auditor: UserData? = null
 )
 
 data class DetailAuditAnswerItem(

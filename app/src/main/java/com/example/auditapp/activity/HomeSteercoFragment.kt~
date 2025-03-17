@@ -47,8 +47,6 @@ class HomeSteercoFragment : Fragment() {
 
             binding.textViewFullname.text = name
 
-            getTotalAuditAnswer()
-
         } catch (e: Exception) {
             Log.e("HomeSteercoFragment", "Error setting role text", e)
         }

@@ -172,7 +172,7 @@ interface ApiServices {
     @GET("audit-answer-total")
     fun getAuditAnswerTotal(@Header("Authorization") token: String): Call<AuditAnswerResponse>
 
-    @GET("audit-answer-area/{areaId}")
+    @GET("audit-answer-area/{areaId")
     fun getAuditAnswerByArea(@Header("Authorization") token: String, @Path("areaId") areaId: Int): Call<AuditAnswerResponse>
 
     @GET("audit-answer-auditor/{id}")

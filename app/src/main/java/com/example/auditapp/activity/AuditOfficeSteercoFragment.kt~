@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.auditapp.R
 import com.example.auditapp.adapter.AreaAuditOfficeSteercoAdapter
@@ -93,11 +92,7 @@ class AuditOfficeSteercoFragment : Fragment(), AreaAuditOfficeSteercoAdapter.OnI
     }
 
     private fun setupRecylerView() {
-        areaAuditOfficeSteercoAdapter = AreaAuditOfficeSteercoAdapter(listArea, this)
-        binding.rvArea.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = areaAuditOfficeSteercoAdapter
-        }
+        TODO("Not yet implemented")
     }
 
     override fun onDestroyView() {
