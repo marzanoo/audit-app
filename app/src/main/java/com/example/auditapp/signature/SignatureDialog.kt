@@ -1,0 +1,53 @@
+package com.example.auditapp.signature
+
+import android.app.Dialog
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.view.Window
+import android.widget.Button
+import android.widget.LinearLayout
+import com.example.auditapp.R
+
+class SignatureDialog(context: Context) {
+    private val dialog = Dialog(context)
+    private lateinit var signatureView: SignatureView
+    private var onSignatureCommpleted: ((Bitmap) -> Unit)? = null
+
+    init {
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.signature_dialog)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        signatureView = SignatureView(context)
+        val container = dialog.findViewById<LinearLayout>(R.id.signatureContainer)
+        container.addView(signatureView, LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT
+        ))
+
+        dialog.findViewById<Button>(R.id.btnClearSignature).setOnClickListener {
+            signatureView.clearSignature()
+        }
+
+        dialog.findViewById<Button>(R.id.btnSaveSignature).setOnClickListener {
+            if (signatureView.hasSignature()) {
+                onSignatureCommpleted?.invoke(signatureView.getSignatureBitmap())
+                dialog.dismiss()
+            }
+        }
+        dialog.findViewById<Button>(R.id.btnCancelSignature).setOnClickListener {
+            dialog.dismiss()
+        }
+    }
+
+    fun setOnSignatureCompletedListener(listener: (Bitmap) -> Unit) {
+        onSignatureCommpleted = listener
+    }
+
+    fun show() {
+        dialog.show()
+    }
+}

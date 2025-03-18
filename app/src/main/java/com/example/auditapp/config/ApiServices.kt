@@ -190,4 +190,14 @@ interface ApiServices {
     @POST("detail-audit-answer/upload-photo")
     fun uploadPhoto(@Header("Authorization") token: String, @Part("detail_audit_answer_id") detailAuditAnswerId: RequestBody, @Part image_path: MultipartBody.Part): Call<DetailFotoResponseUpdate>
 
+    @Multipart
+    @POST("detail-audit-answer/upload-signature")
+    fun uploadSignature(
+        @Header("Authorization") token: String,
+        @Part("audit_answer_id") auditAnswerId: RequestBody,
+        @Part auditor_signature: MultipartBody.Part,
+        @Part auditee_signature: MultipartBody.Part,
+        @Part facilitator_signature: MultipartBody.Part
+    ): Call<Any>
+
 }
