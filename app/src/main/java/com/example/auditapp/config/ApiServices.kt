@@ -184,7 +184,7 @@ interface ApiServices {
 
     @FormUrlEncoded
     @POST("detail-audit-answer/{auditAnswerId}/detail/{detailAuditAnswerId}")
-    fun submitAnswer(@Header("Authorization") token: String, @Path("auditAnswerId") auditAnswerId: Int, @Path("detailAuditAnswerId") detailAuditAnswerId: Int, @Field("score") score: Int, @Field("tertuduh") tertuduh: String?): Call<Any>
+    fun submitAnswer(@Header("Authorization") token: String, @Path("auditAnswerId") auditAnswerId: Int, @Path("detailAuditAnswerId") detailAuditAnswerId: Int, @Field("score") score: Int, @Field("tertuduh[]") tertuduh: Array<String>): Call<Any>
 
     @Multipart
     @POST("detail-audit-answer/upload-photo")

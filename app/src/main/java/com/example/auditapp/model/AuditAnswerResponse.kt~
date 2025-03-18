@@ -67,7 +67,7 @@ data class DetailAuditAnswer(
 
     var listDetailFoto: MutableList<DetailFoto>? = null,
 
-    var listTertuduh: MutableList<String>? = mutableListOf(),
+    var listTertuduh: MutableList<String> = mutableListOf(),
 
     @field:SerializedName("tema")
     val tema: String? = null,

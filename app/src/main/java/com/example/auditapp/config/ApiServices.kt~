@@ -172,7 +172,7 @@ interface ApiServices {
     @GET("audit-answer-total")
     fun getAuditAnswerTotal(@Header("Authorization") token: String): Call<AuditAnswerResponse>
 
-    @GET("audit-answer-area/{areaId")
+    @GET("audit-answer-area/{areaId}")
     fun getAuditAnswerByArea(@Header("Authorization") token: String, @Path("areaId") areaId: Int): Call<AuditAnswerResponse>
 
     @GET("audit-answer-auditor/{id}")
@@ -184,7 +184,7 @@ interface ApiServices {
 
     @FormUrlEncoded
     @POST("detail-audit-answer/{auditAnswerId}/detail/{detailAuditAnswerId}")
-    fun submitAnswer(@Header("Authorization") token: String, @Path("auditAnswerId") auditAnswerId: Int, @Path("detailAuditAnswerId") detailAuditAnswerId: Int, @Field("score") score: Int, @Field("tertuduh") tertuduh: String?): Call<Any>
+    fun submitAnswer(@Header("Authorization") token: String, @Path("auditAnswerId") auditAnswerId: Int, @Path("detailAuditAnswerId") detailAuditAnswerId: Int, @Field("score") score: Int, @Field("tertuduh[]") tertuduh: String?): Call<Any>
 
     @Multipart
     @POST("detail-audit-answer/upload-photo")

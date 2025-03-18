@@ -54,16 +54,12 @@ class ListFormAuditorAdapter(
                     }
 
                     // Setup tertuduh RecyclerView
-                    val tertuduhList = dataDetailAuditAnswer.listTertuduh ?: mutableListOf<String>().also {
-                        dataDetailAuditAnswer.listTertuduh = it
-                    }
-
                     val tertuduhAdapter = TertuduhAdapter(
-                        tertuduhList,
+                        dataDetailAuditAnswer.listTertuduh,
                         object : TertuduhAdapter.OnItemClickListener {
                             override fun onDeleteClick(dataTertuduh: String) {
-                                // Using the local variable which is guaranteed to be non-null
-                                tertuduhList.remove(dataTertuduh)
+                                // Remove tertuduh from the list
+                                dataDetailAuditAnswer.listTertuduh.remove(dataTertuduh)
                                 // Notify adapter
                                 binding.rvTertuduh.adapter?.notifyDataSetChanged()
                             }
@@ -79,9 +75,9 @@ class ListFormAuditorAdapter(
                     binding.btnAddTertuduh.setOnClickListener {
                         val tertuduhText = binding.etTertuduh.text.toString().trim()
                         if (tertuduhText.isNotEmpty()) {
-                            tertuduhList.add(tertuduhText)
+                            dataDetailAuditAnswer.listTertuduh.add(tertuduhText)
                             binding.etTertuduh.text.clear()
-                            binding.rvTertuduh.adapter?.notifyItemInserted(tertuduhList.size - 1)
+                            binding.rvTertuduh.adapter?.notifyItemInserted(dataDetailAuditAnswer.listTertuduh.size - 1)
                         }
                     }
                     binding.tvKategoriForm.text = dataDetailAuditAnswer.kategori

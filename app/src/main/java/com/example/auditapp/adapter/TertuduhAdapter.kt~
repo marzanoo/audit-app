@@ -1,0 +1,7 @@
+package com.example.auditapp.adapter
+
+class TertuduhAdapter(
+    private val listTertuduh: MutableList<String>,
+    private val listener: OnItemClickListener
+) {
+}

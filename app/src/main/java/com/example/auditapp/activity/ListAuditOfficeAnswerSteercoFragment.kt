@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.auditapp.R
 import com.example.auditapp.adapter.AreaAuditOfficeSteercoAdapter
 import com.example.auditapp.adapter.ListAuditOfficeSteercoAdapter
 import com.example.auditapp.config.ApiServices
@@ -68,7 +69,11 @@ class ListAuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRe
     }
 
     override fun onViewClick(dataAuditOfficeSteerco: AuditAnswerItem) {
-        TODO("Not yet implemented")
+        val fragment = AuditOfficeAnswerSteercoFragment.newInstance(dataAuditOfficeSteerco.id)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun loadDataFromApi() {
