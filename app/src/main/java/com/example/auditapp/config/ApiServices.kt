@@ -7,6 +7,7 @@ import com.example.auditapp.model.AuditAnswerItem
 import com.example.auditapp.model.AuditAnswerResponse
 import com.example.auditapp.model.AuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailAuditAnswerResponse
+import com.example.auditapp.model.DetailAuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailFotoResponse
 import com.example.auditapp.model.DetailFotoResponseUpdate
 import com.example.auditapp.model.Form
@@ -184,7 +185,7 @@ interface ApiServices {
 
     @FormUrlEncoded
     @POST("detail-audit-answer/{auditAnswerId}/detail/{detailAuditAnswerId}")
-    fun submitAnswer(@Header("Authorization") token: String, @Path("auditAnswerId") auditAnswerId: Int, @Path("detailAuditAnswerId") detailAuditAnswerId: Int, @Field("score") score: Int, @Field("tertuduh[]") tertuduh: Array<String>): Call<Any>
+    fun submitAnswer(@Header("Authorization") token: String, @Path("auditAnswerId") auditAnswerId: Int, @Path("detailAuditAnswerId") detailAuditAnswerId: Int, @Field("score") score: Int, @Field("tertuduh[]") tertuduh: Array<String>, @Field("temuan[]") temuan: Array<Int>): Call<Any>
 
     @Multipart
     @POST("detail-audit-answer/upload-photo")
@@ -199,5 +200,8 @@ interface ApiServices {
         @Part auditee_signature: MultipartBody.Part,
         @Part facilitator_signature: MultipartBody.Part
     ): Call<Any>
+
+    @GET("detail-audit-answer-show/{auditAnswerId}")
+    fun getDetailAuditAnswerShow(@Header("Authorization") token: String, @Path("auditAnswerId") auditAnswerId: Int): Call<DetailAuditAnswerResponseUpdate>
 
 }

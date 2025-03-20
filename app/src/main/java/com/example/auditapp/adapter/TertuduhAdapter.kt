@@ -2,19 +2,21 @@ package com.example.auditapp.adapter
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.auditapp.databinding.ListItemTertuduhAdapterBinding
+import com.example.auditapp.model.TertuduhData
 
 class TertuduhAdapter(
-    private val listTertuduh: MutableList<String>,
+    private val listTertuduh: MutableList<TertuduhData>,
     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<TertuduhAdapter.ViewHolder>() {
     interface OnItemClickListener {
-        fun onDeleteClick(dataTertuduh: String)
+        fun onDeleteClick(dataTertuduh: TertuduhData)
     }
 
     inner class ViewHolder(val binding: ListItemTertuduhAdapterBinding) :
         RecyclerView.ViewHolder(binding.root) {
-            fun onBindItem(dataTertuduh: String) {
-                binding.tvTertuduh.text = dataTertuduh
+            fun onBindItem(dataTertuduh: TertuduhData) {
+                binding.tvTertuduh.text = dataTertuduh.name
+                binding.tvTemuan.text = dataTertuduh.temuan.toString()
 
                 binding.btnDeleteTertuduh.setOnClickListener {
                     listener.onDeleteClick(dataTertuduh)

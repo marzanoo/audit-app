@@ -29,7 +29,7 @@ class DetailFotoAdapter (
                         .into(binding.imgFoto)
                 } else {
                     // Load from remote URL
-                    val BASE_URL = "http://192.168.18.217/storage/"
+                    val BASE_URL = "http://192.168.18.132:8000/storage/"
                     val imageUrl = BASE_URL + dataDetailFoto.image_path
                     Glide.with(binding.root.context)
                         .load(imageUrl)

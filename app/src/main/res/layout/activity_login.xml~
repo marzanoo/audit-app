@@ -28,16 +28,14 @@
     <EditText
         android:id="@+id/usnET"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/rounder_border"
+        android:layout_height="wrap_content"
         android:hint="Username"
         android:inputType="text" />
 
     <EditText
         android:id="@+id/passET"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/rounder_border"
+        android:layout_height="wrap_content"
         android:hint="Password"
         android:inputType="textPassword"
         android:layout_marginBottom="10dp"

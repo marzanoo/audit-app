@@ -77,21 +77,47 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tertuduh"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"/>
-
-        <EditText
-            android:id="@+id/etTertuduh"
+        <!-- Replace the existing tertuduh EditText with this -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:hint="Tertuduh"/>
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tertuduh"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_tertuduh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/etTertuduh"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:hint="Tertuduh"/>
+
+                <Button
+                    android:id="@+id/btnAddTertuduh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="Tambah"
+                    android:backgroundTint="@color/black"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
     <TextView
         android:layout_width="wrap_content"

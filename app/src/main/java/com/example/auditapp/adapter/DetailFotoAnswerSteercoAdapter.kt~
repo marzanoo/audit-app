@@ -1,0 +1,40 @@
+package com.example.auditapp.adapter
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.auditapp.R
+import com.example.auditapp.databinding.ListItemFotoAuditOfficeAnswerSteercoAdapterBinding
+import com.example.auditapp.model.DetailAuditAnswerUpdate
+import com.example.auditapp.model.ImageData
+
+class DetailFotoAnswerSteercoAdapter(
+    private val listDetailFoto: List<ImageData>
+) : RecyclerView.Adapter<DetailFotoAnswerSteercoAdapter.ViewHolder>() {
+    inner class ViewHolder(val binding: ListItemFotoAuditOfficeAnswerSteercoAdapterBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun onBindItem(dataDetailFoto: ImageData) {
+            val BASE_URL = "http://192.168.18.217:8000/storage/"
+            val imageUrl = BASE_URL + (dataDetailFoto.image_path?: "")
+            Glide.with(binding.root.context)
+                .load(imageUrl)
+                .placeholder(R.drawable.logo_wag)
+                .error(R.drawable.logo_wag)
+                .into(binding.imgFoto)
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ListItemFotoAuditOfficeAnswerSteercoAdapterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.onBindItem(listDetailFoto[position])
+    }
+
+    override fun getItemCount(): Int {
+        return listDetailFoto.size
+    }
+}

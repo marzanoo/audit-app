@@ -12,6 +12,7 @@ import com.example.auditapp.R
 import com.example.auditapp.databinding.ListItemFormAuditorAdapterBinding
 import com.example.auditapp.model.DetailAuditAnswer
 import com.example.auditapp.model.DetailFoto
+import com.example.auditapp.model.TertuduhData
 
 class ListFormAuditorAdapter(
     private val listAuditAnswer: MutableList<DetailAuditAnswer>,
@@ -54,18 +55,19 @@ class ListFormAuditorAdapter(
                     }
 
                     // Setup tertuduh RecyclerView
-                    val tertuduhList = dataDetailAuditAnswer.listTertuduh ?: mutableListOf<String>().also {
+                    val tertuduhList = dataDetailAuditAnswer.listTertuduh ?: mutableListOf<TertuduhData>().also {
                         dataDetailAuditAnswer.listTertuduh = it
                     }
 
                     val tertuduhAdapter = TertuduhAdapter(
                         tertuduhList,
                         object : TertuduhAdapter.OnItemClickListener {
-                            override fun onDeleteClick(dataTertuduh: String) {
+                            override fun onDeleteClick(dataTertuduh: TertuduhData) {
                                 // Using the local variable which is guaranteed to be non-null
                                 tertuduhList.remove(dataTertuduh)
                                 // Notify adapter
                                 binding.rvTertuduh.adapter?.notifyDataSetChanged()
+                                updateTotalScore(tertuduhList, dataDetailAuditAnswer)
                             }
                         }
                     )
@@ -78,16 +80,20 @@ class ListFormAuditorAdapter(
                     // Add button for tertuduh
                     binding.btnAddTertuduh.setOnClickListener {
                         val tertuduhText = binding.etTertuduh.text.toString().trim()
+                        val temuanValue = binding.etTemuan.text.toString().toIntOrNull() ?: 0
                         if (tertuduhText.isNotEmpty()) {
-                            tertuduhList.add(tertuduhText)
+                            val newTertuduh = TertuduhData(tertuduhText, temuanValue)
+                            tertuduhList.add(newTertuduh)
                             binding.etTertuduh.text.clear()
+                            binding.etTemuan.text.clear()
                             binding.rvTertuduh.adapter?.notifyItemInserted(tertuduhList.size - 1)
+                            updateTotalScore(tertuduhList, dataDetailAuditAnswer)
                         }
                     }
                     binding.tvKategoriForm.text = dataDetailAuditAnswer.kategori
                     binding.tvTemaForm.text = dataDetailAuditAnswer.tema
                     binding.tvStandarVariabel.text = dataDetailAuditAnswer.standarVariabel
-                    val BASE_URL = "http://192.168.18.132:8000/storage/"
+                    val BASE_URL = "http://192.168.18.217:8000/storage/"
                     val imageUrl = BASE_URL + dataDetailAuditAnswer.standarFoto
                     Glide.with(binding.root.context)
                         .load(imageUrl)
@@ -122,6 +128,13 @@ class ListFormAuditorAdapter(
                     // Add text watcher
                     binding.etScore.addTextChangedListener(scoreTextWatcher)
                 }
+
+                private fun updateTotalScore(tertuduhList: MutableList<TertuduhData>, dataDetailAuditAnswer: DetailAuditAnswer) {
+                    val totalScore = tertuduhList.sumOf { it.temuan }
+                    dataDetailAuditAnswer.score = totalScore
+                    binding.etScore.setText(totalScore.toString())
+                }
+
                 fun unbind() {
                     // Remove text watcher when ViewHolder is recycled
                     binding.etScore.removeTextChangedListener(scoreTextWatcher)

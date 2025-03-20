@@ -22,7 +22,7 @@ class VariabelFormAdapter(
         fun onBindItem(dataVariabelForm: VariabelForm?) {
             binding.variabel.text = dataVariabelForm?.variabel ?: "Tidak ada"
             binding.standarV.text = dataVariabelForm?.standar_variabel ?: "Tidak ada"
-            val BASE_URL = "http://192.168.18.217:8000/storage/"
+            val BASE_URL = "http://192.168.18.132:8000/storage/"
             val imageUrl = BASE_URL + dataVariabelForm?.standar_foto
             Glide.with(binding.root.context)
                 .load(imageUrl)

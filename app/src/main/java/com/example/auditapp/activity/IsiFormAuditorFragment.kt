@@ -341,14 +341,16 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
 
         listAuditAnswer.forEach { detailAuditAnswer ->
             val score = detailAuditAnswer.score ?: 0
-            val tertuduhArray = detailAuditAnswer.listTertuduh?.toTypedArray() ?: emptyArray()
+            val tertuduhArray = detailAuditAnswer.listTertuduh?.map { it.name }?.toTypedArray() ?: emptyArray()
+            val temuanArray = detailAuditAnswer.listTertuduh?.map { it.temuan }?.toTypedArray() ?: emptyArray()
 
             apiServices.submitAnswer(
                 "Bearer $token",
                 auditAnswerId,
                 detailAuditAnswer.id ?: 0,
                 score,
-                tertuduhArray
+                tertuduhArray,
+                temuanArray
             ).enqueue(object : Callback<Any> {
                 override fun onResponse(call: Call<Any>, response: Response<Any>) {
                     if (response.isSuccessful) {

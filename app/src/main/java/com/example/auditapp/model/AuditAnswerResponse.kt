@@ -43,6 +43,21 @@ class DetailAuditAnswerResponse {
     val data: List<DetailAuditAnswer?>? = null
 }
 
+class DetailAuditAnswerResponseUpdate {
+    @field:SerializedName("data")
+    @JvmField
+    val data: List<DetailAuditAnswerUpdate?>? = null
+
+    @SerializedName("auditor_signature")
+    val auditor_signature: String? = null
+
+    @SerializedName("auditee_signature")
+    val auditee_signature: String? = null
+
+    @SerializedName("facilitator_signature")
+    val facilitator_signature: String? = null
+}
+
 data class DetailAuditAnswer(
     @field:SerializedName("id")
     val id: Int? = null,
@@ -67,7 +82,7 @@ data class DetailAuditAnswer(
 
     var listDetailFoto: MutableList<DetailFoto>? = null,
 
-    var listTertuduh: MutableList<String>? = mutableListOf(),
+    var listTertuduh: MutableList<TertuduhData>? = null,
 
     @field:SerializedName("tema")
     val tema: String? = null,
@@ -77,8 +92,71 @@ data class DetailAuditAnswer(
     @field:SerializedName("kategori")
     val kategori: String? = null,
 
+    var imageUri: Uri? = null,
+)
+
+data class TertuduhData(
+    val name: String,
+    val temuan: Int
+)
+
+data class DetailAuditAnswerUpdate(
+    @SerializedName("id")
+    val id: Int? = null,
+
+    @SerializedName("audit_answer_id")
+    val auditAnswerId: Int? = null,
+
+    @SerializedName("variabel_form_id")
+    val variabelFormId: Int? = null,
+
+    @SerializedName("score")
+    var score: Int? = null,
+
+    @SerializedName("standar_variabel")
+    val standarVariabel: String? = null,
+
+    @SerializedName("variabel")
+    val variabel: String? = null,
+
+    @SerializedName("standar_foto")
+    val standarFoto: String? = null,
+
+    @SerializedName("tema")
+    val tema: String? = null,
+
+    @SerializedName("kategori")
+    val kategori: String? = null,
+
+    @SerializedName("auditees")
+    val auditees: List<AuditeeData>? = null,
+
+    @SerializedName("images")
+    val images: List<ImageData>? = null,
+
+    // Local properties
     var imageUri: Uri? = null
 )
+
+data class AuditeeData(
+    @SerializedName("id")
+    val id: Int? = null,
+
+    @SerializedName("auditee")
+    val name: String? = null,
+
+    @SerializedName("temuan")
+    val temuan: Int? = null
+)
+
+data class ImageData(
+    @SerializedName("id")
+    val id: Int? = null,
+
+    @SerializedName("image_path")
+    val image_path: String? = null
+)
+
 
 data class AuditAnswerItem(
     @field:SerializedName("id")
