@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.auditapp.R
 import com.example.auditapp.databinding.ListItemFotoAuditOfficeAnswerSteercoAdapterBinding
-import com.example.auditapp.model.DetailAuditAnswerUpdate
 import com.example.auditapp.model.ImageData
 
 class DetailFotoAnswerSteercoAdapter(
@@ -15,7 +14,7 @@ class DetailFotoAnswerSteercoAdapter(
     inner class ViewHolder(val binding: ListItemFotoAuditOfficeAnswerSteercoAdapterBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBindItem(dataDetailFoto: ImageData) {
-            val BASE_URL = "http://192.168.18.217:8000/storage/"
+            val BASE_URL = "http://192.168.19.90:8000/storage/"
             val imageUrl = BASE_URL + (dataDetailFoto.image_path ?: "")
             Glide.with(binding.root.context)
                 .load(imageUrl)

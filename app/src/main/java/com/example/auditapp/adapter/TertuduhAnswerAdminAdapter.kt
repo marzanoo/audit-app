@@ -6,9 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.auditapp.databinding.ListItemTertuduhAnswerAdapterBinding
 import com.example.auditapp.model.AuditeeData
 
-class TertuduhAnswerSteercoAdapter(
+class TertuduhAnswerAdminAdapter(
     private val listTertuduh: List<AuditeeData>
-) : RecyclerView.Adapter<TertuduhAnswerSteercoAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<TertuduhAnswerAdminAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: ListItemTertuduhAnswerAdapterBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBindItem(dataTertuduh: AuditeeData) {
@@ -17,16 +17,17 @@ class TertuduhAnswerSteercoAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ListItemTertuduhAnswerAdapterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
-    }
-
     override fun getItemCount(): Int {
         return listTertuduh.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.onBindItem(listTertuduh[position])
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding =
+            ListItemTertuduhAnswerAdapterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
     }
 }

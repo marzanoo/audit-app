@@ -10,26 +10,37 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.example.auditapp.R
-import com.example.auditapp.adapter.AuditOfficeSteercoAdapter
+import com.example.auditapp.adapter.AuditOfficeAdminAdapter
 import com.example.auditapp.config.ApiServices
 import com.example.auditapp.config.NetworkConfig
-import com.example.auditapp.databinding.FragmentAuditOfficeAnswerSteercoBinding
+import com.example.auditapp.databinding.FragmentAuditOfficeAnswerAdminBinding
 import com.example.auditapp.helper.SessionManager
-import com.example.auditapp.model.DetailAuditAnswer
+import com.example.auditapp.model.AuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailAuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailAuditAnswerUpdate
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class AuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
-    private var _binding: FragmentAuditOfficeAnswerSteercoBinding? = null
-    private val binding get() = _binding!!
+class AuditOfficeAnswerAdminFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
     private var auditAnswerId: Int = 0
+    private var _binding: FragmentAuditOfficeAnswerAdminBinding? = null
+    private val binding get() = _binding!!
     private lateinit var sessionManager: SessionManager
     private lateinit var apiServices: ApiServices
-    private lateinit var auditOfficeSteercoAdapter: AuditOfficeSteercoAdapter
-    private val listAuditOfficeSteerco = mutableListOf<DetailAuditAnswerUpdate>()
+    private lateinit var auditOfficeAdminAdapter: AuditOfficeAdminAdapter
+    private val listAuditOfficeAdmin = mutableListOf<DetailAuditAnswerUpdate>()
+
+    companion object {
+        private const val ARG_AUDITANSWER_ID = "auditAnswerId"
+        fun newInstance(auditAnswerId: Int?): Fragment {
+            val fragment = AuditOfficeAnswerAdminFragment()
+            val args = Bundle()
+            args.putInt(ARG_AUDITANSWER_ID, auditAnswerId?: 0)
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,23 +49,12 @@ class AuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefres
         }
     }
 
-    companion object {
-        private const val ARG_AUDITANSWER_ID = "auditAnswerId"
-        fun newInstance(auditAnswerId: Int?): Fragment {
-            val fragment = AuditOfficeAnswerSteercoFragment()
-            val args = Bundle()
-            args.putInt(ARG_AUDITANSWER_ID, auditAnswerId?: 0)
-            fragment.arguments = args
-            return fragment
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentAuditOfficeAnswerSteercoBinding.inflate(inflater, container, false)
+    ) : View {
+        _binding = FragmentAuditOfficeAnswerAdminBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -63,12 +63,62 @@ class AuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefres
 
         sessionManager = SessionManager(requireContext())
         apiServices = NetworkConfig().getServices()
+
         val swipeRefreshLayout = binding.swipeRefreshLayout
         swipeRefreshLayout.setOnRefreshListener(this)
-
+        binding.backBtn.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
         setupRecylerView()
         loadDataFromApi()
+        getAuditAnswerById()
+    }
 
+    private fun getAuditAnswerById() {
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak tersedia", Toast.LENGTH_SHORT).show()
+            return
+        }
+        apiServices.getAuditAnswerById("Bearer $token", auditAnswerId).enqueue(object :
+            Callback<AuditAnswerResponseUpdate> {
+            override fun onResponse(
+                call: Call<AuditAnswerResponseUpdate>,
+                response: Response<AuditAnswerResponseUpdate>
+            ) {
+                if (response.isSuccessful) {
+                    val auditAnswerResponse = response.body()
+                    val tanggal = auditAnswerResponse?.auditAnswer?.tanggal
+                    binding.tvTanggal.text = tanggal
+                    val area = auditAnswerResponse?.auditAnswer?.area?.area
+                    binding.tvArea.text = area
+                    val totalScore = auditAnswerResponse?.auditAnswer?.totalScore
+                    binding.tvTotalScore.text = totalScore.toString()
+                    binding.tvGrade.text = when (totalScore) {
+                        in 0..2 -> "Diamond"
+                        in 3..4 -> "Platinum"
+                        in 5..6 -> "Gold"
+                        in 7..8 -> "Silver"
+                        else -> "Bronze"
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(), "Fetching Data Error: ${response.message()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AuditAnswerResponseUpdate>, t: Throwable) {
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun setupRecylerView() {
+        auditOfficeAdminAdapter = AuditOfficeAdminAdapter(listAuditOfficeAdmin)
+        binding.rvAuditAnswer.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = auditOfficeAdminAdapter
+        }
     }
 
     private fun loadDataFromApi() {
@@ -86,18 +136,17 @@ class AuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefres
                 if (response.isSuccessful) {
                     val detailAuditAnswerResponse = response.body()
                     detailAuditAnswerResponse?.data?.let { data ->
-                        listAuditOfficeSteerco.clear()
-                        data.filterNotNull().forEach{
-                            listAuditOfficeSteerco.add(it)
+                        listAuditOfficeAdmin.clear()
+                        data.filterNotNull().forEach {
+                            listAuditOfficeAdmin.add(it)
                         }
-                        auditOfficeSteercoAdapter.notifyDataSetChanged()
-
-                        loadSignature(
-                            detailAuditAnswerResponse.auditor_signature,
-                            detailAuditAnswerResponse.auditee_signature,
-                            detailAuditAnswerResponse.facilitator_signature
-                        )
+                        auditOfficeAdminAdapter.notifyDataSetChanged()
                     }
+
+                    loadSignature(
+                        detailAuditAnswerResponse?.auditor_signature,
+                        detailAuditAnswerResponse?.auditee_signature,
+                        detailAuditAnswerResponse?.facilitator_signature)
                 }
             }
 
@@ -112,7 +161,7 @@ class AuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefres
         auditeeSignature: String?,
         facilitatorSignature: String?
     ) {
-        val BASE_URL = "http://192.168.18.217:8000/storage/"
+        val BASE_URL = "http://192.168.19.90:8000/storage/"
         auditorSignature?.let {
             Glide.with(requireContext())
                 .load(BASE_URL + it)
@@ -138,23 +187,9 @@ class AuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefres
                 .into(binding.ivSignFasilitator)
         }
     }
-    
-
-    private fun setupRecylerView() {
-        auditOfficeSteercoAdapter = AuditOfficeSteercoAdapter(listAuditOfficeSteerco)
-        binding.rvAuditAnswer.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = auditOfficeSteercoAdapter
-        }
-    }
 
     override fun onRefresh() {
         loadDataFromApi()
         binding.swipeRefreshLayout.isRefreshing = false
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

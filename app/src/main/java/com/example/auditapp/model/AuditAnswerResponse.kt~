@@ -170,8 +170,6 @@ data class AuditAnswerItem(
     @field:SerializedName("area_id")
     val areaId: Int? = null,
 
-    val area: Area? = null,
-
     @field:SerializedName("total_score")
     val totalScore: Int? = null,
 

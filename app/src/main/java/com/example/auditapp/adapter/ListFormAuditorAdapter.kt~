@@ -93,7 +93,7 @@ class ListFormAuditorAdapter(
                     binding.tvKategoriForm.text = dataDetailAuditAnswer.kategori
                     binding.tvTemaForm.text = dataDetailAuditAnswer.tema
                     binding.tvStandarVariabel.text = dataDetailAuditAnswer.standarVariabel
-                    val BASE_URL = "http://192.168.19.90:8000/storage/"
+                    val BASE_URL = "http://192.168.18.143:8000/storage/"
                     val imageUrl = BASE_URL + dataDetailAuditAnswer.standarFoto
                     Glide.with(binding.root.context)
                         .load(imageUrl)

@@ -179,6 +179,9 @@ interface ApiServices {
     @GET("audit-answer-auditor/{id}")
     fun getAuditAnswerAuditor(@Header("Authorization") token: String, @Path("id") id: Int): Call<AuditAnswerResponse>
 
+    @GET("audit-answer/{id}")
+    fun getAuditAnswerById(@Header("Authorization") token: String, @Path("id") id: Int): Call<AuditAnswerResponseUpdate>
+
     //Detail Audit Answer
     @GET("detail-audit-answer/{id}")
     fun getDetailAuditAnswer(@Header("Authorization") token: String, @Path("id") id: Int): Call<DetailAuditAnswerResponse>

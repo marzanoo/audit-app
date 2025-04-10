@@ -15,7 +15,7 @@ import com.example.auditapp.config.ApiServices
 import com.example.auditapp.config.NetworkConfig
 import com.example.auditapp.databinding.FragmentAuditOfficeAnswerSteercoBinding
 import com.example.auditapp.helper.SessionManager
-import com.example.auditapp.model.DetailAuditAnswer
+import com.example.auditapp.model.AuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailAuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailAuditAnswerUpdate
 import retrofit2.Call
@@ -65,9 +65,13 @@ class AuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefres
         apiServices = NetworkConfig().getServices()
         val swipeRefreshLayout = binding.swipeRefreshLayout
         swipeRefreshLayout.setOnRefreshListener(this)
+        binding.backBtn.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
 
         setupRecylerView()
         loadDataFromApi()
+        getAuditAnswerById()
 
     }
 
@@ -107,12 +111,51 @@ class AuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefres
         })
     }
 
+    private fun getAuditAnswerById() {
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak tersedia", Toast.LENGTH_SHORT).show()
+            return
+        }
+        apiServices.getAuditAnswerById("Bearer $token", auditAnswerId).enqueue(object :
+            Callback<AuditAnswerResponseUpdate> {
+            override fun onResponse(
+                call: Call<AuditAnswerResponseUpdate>,
+                response: Response<AuditAnswerResponseUpdate>
+            ) {
+                if (response.isSuccessful) {
+                    val auditAnswerResponse = response.body()
+                    val tanggal = auditAnswerResponse?.auditAnswer?.tanggal
+                    binding.tvTanggal.text = tanggal
+                    val area = auditAnswerResponse?.auditAnswer?.area?.area
+                    binding.tvArea.text = area
+                    val totalScore = auditAnswerResponse?.auditAnswer?.totalScore
+                    binding.tvTotalScore.text = totalScore.toString()
+                    binding.tvGrade.text = when (totalScore) {
+                        in 0..2 -> "Diamond"
+                        in 3..4 -> "Platinum"
+                        in 5..6 -> "Gold"
+                        in 7..8 -> "Silver"
+                        else -> "Bronze"
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(), "Fetching Data Error: ${response.message()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AuditAnswerResponseUpdate>, t: Throwable) {
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
     private fun loadSignature(
         auditorSignature: String?,
         auditeeSignature: String?,
         facilitatorSignature: String?
     ) {
-        val BASE_URL = "http://192.168.18.217:8000/storage/"
+        val BASE_URL = "http://192.168.19.90:8000/storage/"
         auditorSignature?.let {
             Glide.with(requireContext())
                 .load(BASE_URL + it)
