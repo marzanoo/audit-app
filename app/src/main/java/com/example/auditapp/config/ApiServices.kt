@@ -6,10 +6,13 @@ import com.example.auditapp.model.AreaResponse
 import com.example.auditapp.model.AuditAnswerItem
 import com.example.auditapp.model.AuditAnswerResponse
 import com.example.auditapp.model.AuditAnswerResponseUpdate
+import com.example.auditapp.model.AuditExcelResponse
+import com.example.auditapp.model.AuditOfficeResponse
 import com.example.auditapp.model.DetailAuditAnswerResponse
 import com.example.auditapp.model.DetailAuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailFotoResponse
 import com.example.auditapp.model.DetailFotoResponseUpdate
+import com.example.auditapp.model.ExcelDownloadResponse
 import com.example.auditapp.model.Form
 import com.example.auditapp.model.FormResponse
 import com.example.auditapp.model.KaryawanResponse
@@ -36,6 +39,8 @@ import com.example.auditapp.model.VerifikasiOtpRequest
 import com.example.auditapp.model.VerifikasiOtpResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.Response
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -50,6 +55,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.PartMap
 import retrofit2.http.Path
+import retrofit2.http.Streaming
 
 interface ApiServices {
     //Auth
@@ -206,5 +212,13 @@ interface ApiServices {
 
     @GET("detail-audit-answer-show/{auditAnswerId}")
     fun getDetailAuditAnswerShow(@Header("Authorization") token: String, @Path("auditAnswerId") auditAnswerId: Int): Call<DetailAuditAnswerResponseUpdate>
+
+    //Audit Office
+    @GET("audit-office/detail/{id}")
+    fun getDetailAuditOffice(@Header("Authorization") token: String, @Path("id") id: Int): Call<DetailAuditAnswerResponseUpdate>
+
+    @GET("audit-office/download/{id}")
+    @Streaming
+    fun downloadAuditOfficeExcel(@Header("Authorization") token:String, @Path("id") id: Int): Call<AuditExcelResponse>
 
 }

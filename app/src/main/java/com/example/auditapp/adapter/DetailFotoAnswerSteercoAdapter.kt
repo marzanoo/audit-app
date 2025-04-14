@@ -14,7 +14,7 @@ class DetailFotoAnswerSteercoAdapter(
     inner class ViewHolder(val binding: ListItemFotoAuditOfficeAnswerSteercoAdapterBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBindItem(dataDetailFoto: ImageData) {
-            val BASE_URL = "http://192.168.19.90:8000/storage/"
+            val BASE_URL = "http://192.168.18.74:8000/storage/"
             val imageUrl = BASE_URL + (dataDetailFoto.image_path ?: "")
             Glide.with(binding.root.context)
                 .load(imageUrl)

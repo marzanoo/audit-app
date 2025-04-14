@@ -1,0 +1,12 @@
+package com.example.auditapp.activity
+
+import androidx.fragment.app.Fragment
+import com.example.auditapp.databinding.FragmentExcelPreviewBinding
+
+class ExcelPreviewFragment: Fragment() {
+    private var _binding: FragmentExcelPreviewBinding? = null
+    private val binding get() = _binding!!
+
+    private val args: ExcelPreviewFragmentArgs by navArgs()
+
+}
