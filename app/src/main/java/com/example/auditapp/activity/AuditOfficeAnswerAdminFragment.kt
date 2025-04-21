@@ -205,7 +205,7 @@ class AuditOfficeAnswerAdminFragment : Fragment(), SwipeRefreshLayout.OnRefreshL
         auditeeSignature: String?,
         facilitatorSignature: String?
     ) {
-        val BASE_URL = "http://192.168.19.90:8000/storage/"
+        val BASE_URL = "http://192.168.18.113:8000/storage/"
         auditorSignature?.let {
             Glide.with(requireContext())
                 .load(BASE_URL + it)

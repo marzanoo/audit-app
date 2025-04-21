@@ -17,7 +17,7 @@ class VariabelAnswerAdapter(
             RecyclerView.ViewHolder(binding.root) {
                 fun onBindItem(dataVariabelForm: VariabelFormAnswer){
                     binding.tvStandarVariabel.text = dataVariabelForm.standar_variabel
-                    val BASE_URL = "http://192.168.18.74:8000/storage/"
+                    val BASE_URL = "http://192.168.18.113:8000/storage/"
                     val imageUrl = BASE_URL + dataVariabelForm.standar_foto
                     Glide.with(binding.root.context)
                         .load(imageUrl)

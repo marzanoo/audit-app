@@ -18,7 +18,7 @@ class AuditOfficeAdminAdapter(
             binding.tvKategoriForm.text = dataAuditOfficeAdmin.kategori
             binding.tvTemaForm.text = dataAuditOfficeAdmin.tema
             binding.tvStandarVariabel.text = dataAuditOfficeAdmin.standarVariabel
-            val BASE_URL = "http://192.168.18.74:8000/storage/"
+            val BASE_URL = "http://192.168.18.113:8000/storage/"
             val imageStandarUrl = BASE_URL + dataAuditOfficeAdmin.standarFoto
             Glide.with(binding.root.context)
                 .load(imageStandarUrl)

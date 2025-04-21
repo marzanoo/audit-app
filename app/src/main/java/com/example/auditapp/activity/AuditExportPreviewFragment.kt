@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +17,12 @@ import com.example.auditapp.config.ApiServices
 import com.example.auditapp.config.NetworkConfig
 import com.example.auditapp.databinding.FragmentAuditExportPreviewBinding
 import com.example.auditapp.helper.SessionManager
+import com.example.auditapp.model.AreaResponse
 import com.example.auditapp.model.AuditAnswerResponseUpdate
 import com.example.auditapp.model.AuditExcelResponse
 import com.example.auditapp.model.DetailAuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailAuditAnswerUpdate
+import com.example.auditapp.model.SingleAreaResponse
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -161,8 +164,14 @@ class AuditExportPreviewFragment: Fragment() {
             ) {
                 if (response.isSuccessful) {
                     val auditAnswerResponse = response.body()
+                    Log.d("API_RESPONSE", "Raw response: ${response.body()}")
                     tanggal = auditAnswerResponse?.auditAnswer?.tanggal ?: ""
-                    area = auditAnswerResponse?.auditAnswer?.area?.area ?: ""
+                    val areaId = auditAnswerResponse?.auditAnswer?.areaId
+                    if (areaId != null) {
+                        fetchAreaData(token, areaId)
+                    } else {
+                        binding.tvArea.text = "Area: Data tidak tersedia"
+                    }
                     totalScore = auditAnswerResponse?.auditAnswer?.totalScore ?: 0
                     grade = when (totalScore) {
                         in 0..2 -> "Diamond"
@@ -173,7 +182,6 @@ class AuditExportPreviewFragment: Fragment() {
                     }
 
                     binding.tvTitle.text = "Preview Excel Export"
-                    binding.tvArea.text = "Area: $area"
                     binding.tvTanggal.text = "Tanggal: $tanggal"
                     binding.tvTotalScore.text = "Total Score: $totalScore"
                     binding.tvGrade.text = "Grade: $grade"
@@ -186,6 +194,25 @@ class AuditExportPreviewFragment: Fragment() {
 
             override fun onFailure(call: Call<AuditAnswerResponseUpdate>, t: Throwable) {
                 Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun fetchAreaData(token: String, areaId: Int) {
+        apiServices.getAreaById("Bearer $token", areaId).enqueue(object :
+            Callback<SingleAreaResponse> {
+            override fun onResponse(call: Call<SingleAreaResponse>, response: Response<SingleAreaResponse>) {
+                if (response.isSuccessful) {
+                    val areaData = response.body()?.data
+                    area = areaData?.area ?: "Data tidak tersedia"
+                    binding.tvArea.text = "Area: $area"
+                } else {
+                    binding.tvArea.text = "Area: Data tidak tersedia"
+                }
+            }
+
+            override fun onFailure(call: Call<SingleAreaResponse>, t: Throwable) {
+                binding.tvArea.text = "Area: Data tidak tersedia"
             }
         })
     }

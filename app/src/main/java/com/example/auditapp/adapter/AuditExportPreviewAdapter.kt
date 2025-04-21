@@ -21,7 +21,7 @@ class AuditExportPreviewAdapter(
                     binding.tvVariabel.text = data.variabel
                     binding.tvScore.text = data.score.toString()
 
-                    val BASE_URL = "http://192.168.18.74:8000/storage/"
+                    val BASE_URL = "http://192.168.18.113:8000/storage/"
                     if (!data.standarFoto.isNullOrEmpty()) {
                         val imageUrl = BASE_URL + data.standarFoto
                         Glide.with(binding.root.context)
