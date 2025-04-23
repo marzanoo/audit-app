@@ -31,7 +31,15 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
+        <activity android:name=".activity.VerifikasiOtpResetPasswordActivity"
+            android:exported="true">
+        </activity>
+        <activity android:name=".activity.ForgotPasswordEmailActivity"
+            android:exported="true">
+        </activity>
+        <activity android:name=".activity.ResetPasswordActivity"
+            android:exported="true">
+        </activity>
         <activity android:name=".activity.VerifikasiAkunActivity"
             android:exported="true">
         </activity>

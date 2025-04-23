@@ -39,6 +39,12 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
 
+        findViewById<TextView>(R.id.forgotTV).setOnClickListener {
+            val intent = Intent(this, ForgotPasswordEmailActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
         if (!sessionManager.isTokenExpired()) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)

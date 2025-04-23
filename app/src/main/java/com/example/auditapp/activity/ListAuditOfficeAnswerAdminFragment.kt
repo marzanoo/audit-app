@@ -63,6 +63,10 @@ class ListAuditOfficeAnswerAdminFragment : Fragment(), ListAuditOfficeAdminAdapt
         val swipeRefreshLayout = binding.swipeRefreshLayout
         swipeRefreshLayout.setOnRefreshListener(this)
 
+        binding.backBtn.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+
         setupRecylerView()
         loadDataFromApi()
     }

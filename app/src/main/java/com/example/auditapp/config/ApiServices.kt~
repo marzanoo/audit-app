@@ -82,8 +82,8 @@ interface ApiServices {
     @POST("resend-otp")
     fun resendOtp(@Body request: OtpRequest): retrofit2.Call<OtpResponse>
 
-    @POST("resend-otp-reset")
-    fun resendOtpReset(@Body request: OtpRequest): retrofit2.Call<OtpResponse>
+    @POST("resend-")
+    fun resendOtp(@Body request: OtpRequest): retrofit2.Call<OtpResponse>
 
     @POST("verify-otp")
     fun verifyOtp(@Body request: VerifikasiOtpRequest): retrofit2.Call<VerifikasiOtpResponse>
