@@ -19,7 +19,7 @@ class AuditOfficeSteercoAdapter(
             binding.tvKategoriForm.text = dataAuditOfficeSteerco.kategori
             binding.tvTemaForm.text = dataAuditOfficeSteerco.tema
             binding.tvStandarVariabel.text = dataAuditOfficeSteerco.standarVariabel
-            val BASE_URL = "http://192.168.18.113:8000/storage/"
+            val BASE_URL = "http://192.168.19.204:8000/storage/"
             val imageStandarUrl = BASE_URL + dataAuditOfficeSteerco.standarFoto
             Glide.with(binding.root.context)
                 .load(imageStandarUrl)

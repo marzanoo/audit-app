@@ -138,13 +138,10 @@ class AuditOfficeAnswerAdminFragment : Fragment(), SwipeRefreshLayout.OnRefreshL
                     binding.tvArea.text = area
                     val totalScore = auditAnswerResponse?.auditAnswer?.totalScore
                     binding.tvTotalScore.text = totalScore.toString()
-                    binding.tvGrade.text = when (totalScore) {
-                        in 0..2 -> "Diamond"
-                        in 3..4 -> "Platinum"
-                        in 5..6 -> "Gold"
-                        in 7..8 -> "Silver"
-                        else -> "Bronze"
-                    }
+                    val grade = auditAnswerResponse?.auditAnswer?.grade
+                    val picName = auditAnswerResponse?.auditAnswer?.pic_name
+                    binding.tvGrade.text = grade
+                    binding.tvPicArea.text = picName.toString()
 
                 } else {
                     Toast.makeText(requireContext(), "Fetching Data Error: ${response.message()}", Toast.LENGTH_SHORT).show()

@@ -23,6 +23,7 @@ import com.example.auditapp.model.LoginResponse
 import com.example.auditapp.model.LogoutResponse
 import com.example.auditapp.model.OtpRequest
 import com.example.auditapp.model.OtpResponse
+import com.example.auditapp.model.PicAreaResponse
 import com.example.auditapp.model.RegisterRequest
 import com.example.auditapp.model.RegisterResponse
 import com.example.auditapp.model.ResetPasswordRequest
@@ -119,6 +120,10 @@ interface ApiServices {
 
     @GET("total-area")
     fun getTotalArea(@Header("Authorization") token: String): Call<AreaResponse>
+
+    //Pic Area
+    @GET("pic-area")
+    fun getPicArea(@Header("Authorization") token: String): Call<PicAreaResponse>
 
     //Karyawan
     @GET("karyawan-pic")

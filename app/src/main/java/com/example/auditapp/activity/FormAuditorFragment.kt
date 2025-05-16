@@ -19,6 +19,9 @@ import com.example.auditapp.model.AreaResponse
 import com.example.auditapp.model.AuditAnswerItem
 import com.example.auditapp.model.AuditAnswerResponse
 import com.example.auditapp.model.AuditAnswerResponseUpdate
+import com.example.auditapp.model.Karyawan
+import com.example.auditapp.model.PicArea
+import com.example.auditapp.model.PicAreaResponse
 import com.example.auditapp.model.UserResponseGetById
 import retrofit2.Call
 import retrofit2.Callback
@@ -48,6 +51,7 @@ class FormAuditorFragment : Fragment() {
         apiServices = NetworkConfig().getServices()
         getUserById()
         getArea()
+        getPicArea()
 
         binding.backBtn.setOnClickListener {
             navigateToHomeAuditor()
@@ -86,8 +90,10 @@ class FormAuditorFragment : Fragment() {
         val auditorName = userId
         val areaSelected = binding.spinArea.selectedItem as? Area
         val tanggal = binding.etTanggal.text.toString().trim()
+        val picArea = binding.spinPicArea.selectedItem as? PicArea
 
         val areaId = areaSelected?.id ?: 0
+        val picId = picArea?.id ?: 0
         if (auditorName == 0 || areaId == 0 || tanggal.isEmpty()) {
             Toast.makeText(requireContext(), "Mohon untuk isi semua kolom", Toast.LENGTH_SHORT).show()
             return
@@ -96,7 +102,8 @@ class FormAuditorFragment : Fragment() {
         val auditAnswer = AuditAnswerItem(
             tanggal = tanggal,
             auditorId = auditorName,
-            areaId = areaId
+            areaId = areaId,
+            pic_area = picId
         )
 
         apiServices.createAuditAnswer("Bearer $token", auditAnswer).enqueue(object :
@@ -129,6 +136,34 @@ class FormAuditorFragment : Fragment() {
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun getPicArea() {
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak tersedia", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        apiServices.getPicArea("Bearer $token").enqueue(object : Callback<PicAreaResponse> {
+            override fun onResponse(
+                call: Call<PicAreaResponse>,
+                response: Response<PicAreaResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val picAreaList = response.body()?.data ?: emptyList()
+                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, picAreaList)
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    binding.spinPicArea.adapter = adapter
+                } else {
+                    Toast.makeText(requireContext(), "Gagal mengambil data PIC Area: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<PicAreaResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun getArea() {

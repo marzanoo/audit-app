@@ -172,8 +172,16 @@ data class AuditAnswerItem(
 
     val area: Area? = null,
 
+    val pic_area: Int? = null,
+
+    val pic_name: String? = null,
+
+    val grade: String? = null,
+
     @field:SerializedName("total_score")
     val totalScore: Int? = null,
+
+    val status: String? = null,
 
     val created_at: String? = null,
     val updated_at: String? = null,

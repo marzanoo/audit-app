@@ -62,6 +62,33 @@
                 android:ellipsize="end"
                 android:textAppearance="@style/TextAppearance.AppCompat"/>
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:textSize="20sp"
+                android:maxLines="2"
+                android:text="Status"
+                android:textAppearance="@style/TextAppearance.AppCompat"/>
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:maxLines="3"
+                android:ellipsize="end"
+                android:textAppearance="@style/TextAppearance.AppCompat"/>
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tvLihat"
             android:layout_width="wrap_content"

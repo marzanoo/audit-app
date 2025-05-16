@@ -16,6 +16,7 @@ import com.example.auditapp.databinding.FragmentListAuditOfficeAnswerAdminBindin
 import com.example.auditapp.helper.SessionManager
 import com.example.auditapp.model.AuditAnswerItem
 import com.example.auditapp.model.AuditAnswerResponse
+import com.example.auditapp.model.SingleAreaResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -63,12 +64,45 @@ class ListAuditOfficeAnswerAdminFragment : Fragment(), ListAuditOfficeAdminAdapt
         val swipeRefreshLayout = binding.swipeRefreshLayout
         swipeRefreshLayout.setOnRefreshListener(this)
 
+        getAreaName()
+
         binding.backBtn.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
         setupRecylerView()
         loadDataFromApi()
+    }
+
+    private fun getAreaName() {
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak tersedia", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        apiServices.getAreaById("Bearer $token", areaId).enqueue(object :
+            Callback<SingleAreaResponse> {
+            override fun onResponse(
+                call: Call<SingleAreaResponse>,
+                response: Response<SingleAreaResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val areaData = response.body()?.data
+                    val areaName = areaData?.area ?: "Data tidak tersedia"
+                    binding.tvAreas.text = areaName
+                } else {
+                    binding.tvAreas.text = ""
+                    Toast.makeText(requireContext(), "Gagal mengambil data area", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<SingleAreaResponse>, t: Throwable) {
+                binding.tvAreas.text = ""
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
     }
 
     override fun onViewClick(dataAuditOfficeAdmin: AuditAnswerItem) {

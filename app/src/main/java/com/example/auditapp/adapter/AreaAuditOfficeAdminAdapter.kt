@@ -17,7 +17,6 @@ class AreaAuditOfficeAdminAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun onBindItem(dataArea: Area?) {
             binding.area.text = dataArea?.area
-            binding.PicArea.text = dataArea?.karyawans?.emp_name ?: "Tidak ada"
             binding.tvLihat.setOnClickListener {
                 dataArea?.let { listener.onViewClick(it) }
             }
