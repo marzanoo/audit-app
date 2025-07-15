@@ -19,7 +19,8 @@ class AreaAdapter (
         RecyclerView.ViewHolder(binding.root) {
         fun onBindItem(dataArea: Area?) {
             binding.area.text = dataArea?.area
-//            binding.lantai.text = dataArea?.lantai?.lantai.toString()
+            binding.lantai.text = dataArea?.lantai?.lantai.toString()
+            binding.PicArea.text = dataArea?.karyawans?.emp_name ?: "Tidak ada"
 
             binding.btnHapusArea.setOnClickListener {
                 dataArea?.let { listener.onDeleteClick(it) }

@@ -71,10 +71,11 @@ class FormAuditorFragment : Fragment() {
             val month = calendar.get(Calendar.MONTH)
             val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-                val formattedDate = "${selectedYear}-${selectedMonth + 1}-${selectedDay}"
-                binding.etTanggal.setText(formattedDate)
-            }, year, month, day)
+            val datePickerDialog =
+                DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+                    val formattedDate = "${selectedYear}-${selectedMonth + 1}-${selectedDay}"
+                    binding.etTanggal.setText(formattedDate)
+                }, year, month, day)
 
             datePickerDialog.show()
         }
@@ -95,7 +96,8 @@ class FormAuditorFragment : Fragment() {
         val areaId = areaSelected?.id ?: 0
         val picId = picArea?.id ?: 0
         if (auditorName == 0 || areaId == 0 || tanggal.isEmpty()) {
-            Toast.makeText(requireContext(), "Mohon untuk isi semua kolom", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Mohon untuk isi semua kolom", Toast.LENGTH_SHORT)
+                .show()
             return
         }
 
@@ -114,17 +116,28 @@ class FormAuditorFragment : Fragment() {
             ) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
-                    Toast.makeText(requireContext(), "Audit berhasil dimulai", Toast.LENGTH_SHORT).show()
-                    navigateToIsiFormAuditor(dataAuditAnswer = responseBody?.auditAnswer ?: AuditAnswerItem())
+                    Toast.makeText(requireContext(), "Audit berhasil dimulai", Toast.LENGTH_SHORT)
+                        .show()
+                    navigateToIsiFormAuditor(
+                        dataAuditAnswer = responseBody?.auditAnswer ?: AuditAnswerItem()
+                    )
                 } else {
-                    Toast.makeText(requireContext(), "Gagal mulai audit: ${response.message()}", Toast.LENGTH_SHORT).show()
-                    Log.e("FormAuditorFragment", "Gagal mulai audit: ${response.errorBody()?.string()}")
+                    Toast.makeText(
+                        requireContext(),
+                        "Gagal mulai audit: ${response.message()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Log.e(
+                        "FormAuditorFragment",
+                        "Gagal mulai audit: ${response.errorBody()?.string()}"
+                    )
                 }
             }
 
             override fun onFailure(call: Call<AuditAnswerResponseUpdate>, t: Throwable) {
                 t.printStackTrace() // Cetak error di log
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
     }
@@ -152,16 +165,26 @@ class FormAuditorFragment : Fragment() {
             ) {
                 if (response.isSuccessful) {
                     val picAreaList = response.body()?.data ?: emptyList()
-                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, picAreaList)
+                    val adapter = ArrayAdapter(
+                        requireContext(),
+                        android.R.layout.simple_spinner_item,
+                        picAreaList
+                    )
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     binding.spinPicArea.adapter = adapter
+
                 } else {
-                    Toast.makeText(requireContext(), "Gagal mengambil data PIC Area: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Gagal mengambil data PIC Area: ${response.errorBody()?.string()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             override fun onFailure(call: Call<PicAreaResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
     }
@@ -176,16 +199,25 @@ class FormAuditorFragment : Fragment() {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
                 if (response.isSuccessful) {
                     val areaList = response.body()?.data ?: emptyList()
-                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, areaList)
+                    val adapter = ArrayAdapter(
+                        requireContext(),
+                        android.R.layout.simple_spinner_item,
+                        areaList
+                    )
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     binding.spinArea.adapter = adapter
                 } else {
-                    Toast.makeText(requireContext(), "Gagal mengambil data Area: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Gagal mengambil data Area: ${response.errorBody()?.string()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             override fun onFailure(call: Call<AreaResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
     }
@@ -215,7 +247,11 @@ class FormAuditorFragment : Fragment() {
                     val userResponse = response.body()
                     binding.edtNama.setText(userResponse?.data?.name)
                 } else {
-                    Toast.makeText(requireContext(), "Gagal mengambil data user", Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        requireContext(),
+                        "Gagal mengambil data user",
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
             }

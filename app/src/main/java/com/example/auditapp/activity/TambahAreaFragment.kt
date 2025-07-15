@@ -51,22 +51,22 @@ class TambahAreaFragment : Fragment() {
             createArea()
         }
 
-        loadLantai()
-        loadKaryawanPic()
+//        loadLantai()
+//        loadKaryawanPic()
     }
 
     private fun createArea() {
         val sessionManager = SessionManager(requireContext())
         val token = sessionManager.getAuthToken()
         val areaName = binding.etArea.text.toString()
-        val lantaiSelected = binding.spinLantai.selectedItem as? Lantai
-        val picSelected = binding.spinPIC.selectedItem as? Karyawan
+//        val lantaiSelected = binding.spinLantai.selectedItem as? Lantai
+//        val picSelected = binding.spinPIC.selectedItem as? Karyawan
 
         // Pastikan objek tidak null sebelum mengambil ID
-        val lantaiId = lantaiSelected?.id ?: 0
-        val picId = picSelected?.emp_id ?: ""
+//        val lantaiId = lantaiSelected?.id ?: 0
+//        val picId = picSelected?.emp_id ?: ""
 
-        if (areaName.isEmpty() || lantaiId == 0 || picId.isEmpty()) {
+        if (areaName.isEmpty()) {
             Toast.makeText(
                 requireContext(),
                 "Mohon untuk isi semua kolom",
@@ -78,8 +78,7 @@ class TambahAreaFragment : Fragment() {
         val area = Area(
             id = null,
             area = areaName,
-            lantai_id = lantaiId,
-            pic_area = picId,
+//            lantai_id = 4,
             created_at = null,
             updated_at = null
         )
@@ -88,8 +87,15 @@ class TambahAreaFragment : Fragment() {
         apiServices.createArea("Bearer $token", area).enqueue(object : Callback<UpdateAreaResponse> {
             override fun onResponse(call: Call<UpdateAreaResponse>, response: Response<UpdateAreaResponse>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "Area berhasil ditambahkan", Toast.LENGTH_SHORT).show()
-                    navigateToViewArea()
+                    val areaResponse = response.body()
+                    val areaData = areaResponse?.message
+                    if (areaData == "Area berhasil ditambahkan") {
+                        Toast.makeText(requireContext(), "Area berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+                        navigateToViewArea()
+                    } else {
+                        Toast.makeText(requireContext(), "Gagal menambahkan area, Area sudah ada", Toast.LENGTH_SHORT).show()
+                        return
+                    }
                 } else {
                     Toast.makeText(requireContext(), "Gagal menambahkan area", Toast.LENGTH_SHORT).show()
                 }
@@ -110,75 +116,75 @@ class TambahAreaFragment : Fragment() {
             .commit()
     }
 
-    private fun loadKaryawanPic() {
-        val apiServices = NetworkConfig().getServices()
-        val sessionManager = SessionManager(requireContext())
-        val token = sessionManager.getAuthToken()
-        apiServices.getKaryawanPic("Bearer $token").enqueue(object : Callback<KaryawanResponse> {
-            override fun onResponse(
-                call: Call<KaryawanResponse>,
-                response: Response<KaryawanResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val karyawanList = response.body()?.data ?: emptyList()
-                    val adapter = ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_spinner_item,
-                        karyawanList
-                    )
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    binding.spinPIC.adapter = adapter
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Gagal mengambil data Karyawan: ${response.errorBody()?.string()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
+//    private fun loadKaryawanPic() {
+//        val apiServices = NetworkConfig().getServices()
+//        val sessionManager = SessionManager(requireContext())
+//        val token = sessionManager.getAuthToken()
+//        apiServices.getKaryawanPic("Bearer $token").enqueue(object : Callback<KaryawanResponse> {
+//            override fun onResponse(
+//                call: Call<KaryawanResponse>,
+//                response: Response<KaryawanResponse>
+//            ) {
+//                if (response.isSuccessful) {
+//                    val karyawanList = response.body()?.data ?: emptyList()
+//                    val adapter = ArrayAdapter(
+//                        requireContext(),
+//                        android.R.layout.simple_spinner_item,
+//                        karyawanList
+//                    )
+//                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//                    binding.spinPIC.adapter = adapter
+//                } else {
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "Gagal mengambil data Karyawan: ${response.errorBody()?.string()}",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<KaryawanResponse>, t: Throwable) {
+//                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+//                    .show()
+//                Log.e("TambahAreaFragment", "Fetching Data Error: ${t.message}")
+//            }
+//        })
+//    }
 
-            override fun onFailure(call: Call<KaryawanResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
-                    .show()
-                Log.e("TambahAreaFragment", "Fetching Data Error: ${t.message}")
-            }
-        })
-    }
-
-    private fun loadLantai() {
-        val apiServices = NetworkConfig().getServices()
-        val sessionManager = SessionManager(requireContext())
-        val token = sessionManager.getAuthToken()
-        apiServices.getLantai("Bearer $token").enqueue(object : Callback<LantaiResponse> {
-            override fun onResponse(
-                call: Call<LantaiResponse>,
-                response: Response<LantaiResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val lantaiList = response.body()?.lantaiList ?: emptyList()
-                    val adapter = ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_spinner_item,
-                        lantaiList
-                    )
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    binding.spinLantai.adapter = adapter
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Gagal mengambil data Lantai: ${response.errorBody()?.string()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-
-            override fun onFailure(call: Call<LantaiResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
-                    .show()
-                Log.e("TambahAreaFragment", "Fetching Data Error: ${t.message}")
-            }
-        })
-    }
+//    private fun loadLantai() {
+//        val apiServices = NetworkConfig().getServices()
+//        val sessionManager = SessionManager(requireContext())
+//        val token = sessionManager.getAuthToken()
+//        apiServices.getLantai("Bearer $token").enqueue(object : Callback<LantaiResponse> {
+//            override fun onResponse(
+//                call: Call<LantaiResponse>,
+//                response: Response<LantaiResponse>
+//            ) {
+//                if (response.isSuccessful) {
+//                    val lantaiList = response.body()?.lantaiList ?: emptyList()
+//                    val adapter = ArrayAdapter(
+//                        requireContext(),
+//                        android.R.layout.simple_spinner_item,
+//                        lantaiList
+//                    )
+//                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//                    binding.spinLantai.adapter = adapter
+//                } else {
+//                    Toast.makeText(
+//                        requireContext(),
+//                        "Gagal mengambil data Lantai: ${response.errorBody()?.string()}",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<LantaiResponse>, t: Throwable) {
+//                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+//                    .show()
+//                Log.e("TambahAreaFragment", "Fetching Data Error: ${t.message}")
+//            }
+//        })
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

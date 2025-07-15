@@ -13,7 +13,7 @@
         android:text="Kategori Form"
         android:textStyle="bold"
         android:textSize="18sp"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="8dp" />
 
     <TextView
         android:id="@+id/tvTemaForm"
@@ -22,7 +22,7 @@
         android:text="1.1 Perlengkapan yang tidak diperlukan"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:layout_marginBottom="6dp"/>
+        android:layout_marginBottom="6dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginBottom="4dp"
-        android:layout_marginStart="8dp"/>
+        android:layout_marginStart="8dp" />
 
     <TextView
         android:id="@+id/tvStandarVariabel"
@@ -40,16 +40,16 @@
         android:text="Tidak ada barang/ATK yang rusak..."
         android:textSize="14sp"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="8dp" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="125dp"
-        android:layout_height="125dp"
-        android:id="@+id/iv_StandarFoto"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_standar_foto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/grey_slate2"/>
+        android:layout_marginBottom="8dp" />
 
     <TextView
         android:id="@+id/tvVariabel"
@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:text="Ada barang/ATK yang rusak"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="4dp"/>
+        android:layout_marginBottom="4dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:text="Ambil Foto"
-            android:backgroundTint="@color/black"/>
+            android:backgroundTint="@color/black" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_foto"
@@ -91,12 +91,12 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp"/>
+                android:layout_marginBottom="4dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_tertuduh"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -109,7 +109,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
-                    android:hint="Tertuduh"/>
+                    android:hint="Tertuduh" />
 
                 <EditText
                     android:id="@+id/etTemuan"
@@ -118,17 +118,18 @@
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:inputType="number"
-                    android:hint="Temuan"/>
+                    android:hint="Temuan" />
 
                 <Button
                     android:id="@+id/btnAddTertuduh"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:text="Tambah"
-                    android:backgroundTint="@color/black"/>
+                    android:backgroundTint="@color/black" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -137,7 +138,8 @@
         android:textStyle="bold"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="4dp"
-        android:layout_marginStart="8dp"/>
+        android:layout_marginStart="8dp" />
+
     <EditText
         android:id="@+id/etScore"
         android:layout_width="match_parent"
@@ -148,5 +150,5 @@
         android:hint="Score"
         android:textSize="12sp"
         android:inputType="number"
-        android:padding="8dp"/>
+        android:padding="8dp" />
 </LinearLayout>

@@ -3,6 +3,7 @@ package com.example.auditapp.activity
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -27,6 +28,7 @@ import com.example.auditapp.model.DetailAuditAnswer
 import com.example.auditapp.model.DetailAuditAnswerResponse
 import com.example.auditapp.model.DetailFoto
 import com.example.auditapp.model.DetailFotoResponseUpdate
+import com.example.auditapp.model.StandarFotoResponse
 import com.example.auditapp.signature.SignatureDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -39,7 +41,8 @@ import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
 
-class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, ListFormAuditorAdapter.OnItemClickListener {
+class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
+    ListFormAuditorAdapter.OnItemClickListener {
     private var _binding: FragmentIsiFormAuditorBinding? = null
     private val binding get() = _binding!!
     private var auditAnswerId: Int = 0
@@ -49,6 +52,8 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
     private lateinit var apiServices: ApiServices
     private var imageUri: Uri? = null
     private var selectedPosition: Int = -1
+    private val localAuditAnswerChanges = mutableMapOf<Int, DetailAuditAnswer>()
+    private val localPhotos = mutableMapOf<Int, MutableList<DetailFoto>>()
 
     // Signature Variables
     private var auditorSignatureFile: File? = null
@@ -82,16 +87,21 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
                 openCamera()
             }
         } else {
-            Toast.makeText(requireContext(), "Izin kamera diperlukan untuk mengambil foto", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Izin kamera diperlukan untuk mengambil foto",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
-    private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success && imageUri != null) {
-            if (selectedPosition != -1) {
+    // In IsiFormAuditorFragment.kt, update the takePicture result handler
+    private val takePicture =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success && imageUri != null && isAdded && selectedPosition != -1 && selectedPosition < listAuditAnswer.size) {
                 // Create a new DetailFoto object with the URI
                 val newPhoto = DetailFoto(
-                    id = 0, // You might need to generate a unique ID
+                    id = 0,
                     detail_audit_answer_id = listAuditAnswer[selectedPosition].id ?: 0,
                     image_path = imageUri.toString(),
                     uri = imageUri
@@ -104,13 +114,25 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
 
                 listAuditAnswer[selectedPosition].listDetailFoto?.add(newPhoto)
 
+                // Store in local photos
+                val detailAuditAnswerId = listAuditAnswer[selectedPosition].id ?: 0
+                if (!localPhotos.containsKey(detailAuditAnswerId)) {
+                    localPhotos[detailAuditAnswerId] = mutableListOf()
+                }
+                localPhotos[detailAuditAnswerId]?.add(newPhoto)
                 // Update the adapter
                 auditAnswerAdapter.notifyItemChanged(selectedPosition)
+            } else if (success && imageUri != null) {
+                Toast.makeText(
+                    requireContext(),
+                    "Gagal menambahkan foto: Posisi tidak valid",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(requireContext(), "Gagal mengambil gambar", Toast.LENGTH_SHORT)
+                    .show()
             }
-        } else {
-            Toast.makeText(requireContext(), "Gagal mengambil gambar", Toast.LENGTH_SHORT).show()
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,7 +141,11 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentIsiFormAuditorBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -232,12 +258,14 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
                 binding.auditorSignatureImage.visibility = View.VISIBLE
                 binding.auditorSignatureEmptyText.visibility = View.GONE
             }
+
             "auditee" -> {
                 auditeeSignatureFile = file
                 binding.auditeeSignatureImage.setImageBitmap(bitmap)
                 binding.auditeeSignatureImage.visibility = View.VISIBLE
                 binding.auditeeSignatureEmptyText.visibility = View.GONE
             }
+
             "facilitator" -> {
                 facilitatorSignatureFile = file
                 binding.facilitatorSignatureImage.setImageBitmap(bitmap)
@@ -255,12 +283,14 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
                 binding.auditorSignatureImage.visibility = View.GONE
                 binding.auditorSignatureEmptyText.visibility = View.VISIBLE
             }
+
             "auditee" -> {
                 auditeeSignatureFile = null
                 binding.auditeeSignatureImage.setImageBitmap(null)
                 binding.auditeeSignatureImage.visibility = View.GONE
                 binding.auditeeSignatureEmptyText.visibility = View.VISIBLE
             }
+
             "facilitator" -> {
                 facilitatorSignatureFile = null
                 binding.facilitatorSignatureImage.setImageBitmap(null)
@@ -287,6 +317,8 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
             return
         }
 
+        binding.progressBar.visibility = View.VISIBLE
+
         apiServices.getDetailAuditAnswer("Bearer $token", auditAnswerId).enqueue(object :
             Callback<DetailAuditAnswerResponse> {
             override fun onResponse(
@@ -297,16 +329,115 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
                     val detailAuditAnswerResponse = response.body()
                     detailAuditAnswerResponse?.data?.let { detailAuditAnswer ->
                         listAuditAnswer.clear()
-                        listAuditAnswer.addAll(detailAuditAnswer.filterNotNull())
+                        // Merge server data with local changes
+                        detailAuditAnswer.filterNotNull().forEach { serverAnswer ->
+                            val localAnswer = localAuditAnswerChanges[serverAnswer.id ?: 0]
+                            val mergedAnswer = if (localAnswer != null) {
+                                // Merge fields (e.g., score, tertuduh, etc.)
+                                serverAnswer.apply {
+                                    score = localAnswer.score ?: score
+                                    listTertuduh = localAnswer.listTertuduh ?: listTertuduh
+                                    // Merge photos
+                                    listDetailFoto =
+                                        localPhotos[serverAnswer.id ?: 0]
+                                            ?: serverAnswer.listDetailFoto
+                                }
+                            } else {
+                                serverAnswer
+                            }
+                            listAuditAnswer.add(mergedAnswer)
+                            // Fetch standar foto for each audit answer
+                            mergedAnswer.variabelFormId?.let { variabelFormId ->
+                                fetchStandarFotoVariabel(variabelFormId, mergedAnswer)
+                            }
+                        }
+//                        listAuditAnswer.addAll(detailAuditAnswer.filterNotNull())
+//                        // Fetch standar foto for each audit answer
+//                        listAuditAnswer.forEach { auditAnswer ->
+//                            auditAnswer.variabelFormId?.let { variabelFormId ->
+//                                fetchStandarFotoVariabel(variabelFormId, auditAnswer)
+//                            }
+//                        }
                         auditAnswerAdapter.notifyDataSetChanged()
+
+                        // Reapply signatures to UI
+                        auditorSignatureFile?.let {
+                            val bitmap = BitmapFactory.decodeFile(it.absolutePath)
+                            binding.auditorSignatureImage.setImageBitmap(bitmap)
+                            binding.auditorSignatureImage.visibility = View.VISIBLE
+                            binding.auditorSignatureEmptyText.visibility = View.GONE
+                        }
+                        auditeeSignatureFile?.let {
+                            val bitmap = BitmapFactory.decodeFile(it.absolutePath)
+                            binding.auditeeSignatureImage.setImageBitmap(bitmap)
+                            binding.auditeeSignatureImage.visibility = View.VISIBLE
+                            binding.auditeeSignatureEmptyText.visibility = View.GONE
+                        }
+                        facilitatorSignatureFile?.let {
+                            val bitmap = BitmapFactory.decodeFile(it.absolutePath)
+                            binding.facilitatorSignatureImage.setImageBitmap(bitmap)
+                            binding.facilitatorSignatureImage.visibility = View.VISIBLE
+                            binding.facilitatorSignatureEmptyText.visibility = View.GONE
+                        }
+                        updateSaveButtonState()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Gagal mengambil data audit answer", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Gagal mengambil data audit answer",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
+                binding.progressBar.visibility = View.GONE
+                binding.swipeRefreshLayout.isRefreshing = false
             }
 
             override fun onFailure(call: Call<DetailAuditAnswerResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
+                Log.e("IsiFormAuditorFragment", "Network Error: ${t.message}")
+                binding.progressBar.visibility = View.GONE
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+        })
+    }
+
+    private fun fetchStandarFotoVariabel(variableFormId: Int, auditAnswer: DetailAuditAnswer) {
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) return
+
+        apiServices.getStandarFotoVariabel("Bearer $token", variableFormId).enqueue(object :
+            Callback<StandarFotoResponse> {
+            override fun onResponse(
+                call: Call<StandarFotoResponse>,
+                response: Response<StandarFotoResponse>
+            ) {
+                if (response.isSuccessful) {
+                    response.body()?.data?.let { standarFotos ->
+                        auditAnswer.listStandarFoto = standarFotos.toMutableList()
+                        Log.d(
+                            "IsiFormAuditorFragment",
+                            "Fetched ${standarFotos.size} standar fotos for variableFormId: $variableFormId"
+                        )
+                        val position = listAuditAnswer.indexOf(auditAnswer)
+                        if (position != -1 && isAdded && _binding != null) {
+                            auditAnswerAdapter.notifyItemChanged(position)
+                        }
+                    } ?: run {
+                        Log.d(
+                            "IsiFormAuditorFragment",
+                            "No standar fotos found for variableFormId: $variableFormId"
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "IsiFormAuditorFragment",
+                        "Gagal mengambil foto standar: ${response.message()}"
+                    )
+                }
+            }
+
+            override fun onFailure(call: Call<StandarFotoResponse>, t: Throwable) {
                 Log.e("IsiFormAuditorFragment", "Network Error: ${t.message}")
             }
         })
@@ -322,7 +453,11 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
         binding.progressBar.visibility = View.VISIBLE
 
         if (!validateSignatures()) {
-            Toast.makeText(requireContext(), "Harap lengkapi semua tanda tangan", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Harap lengkapi semua tanda tangan",
+                Toast.LENGTH_SHORT
+            ).show()
             binding.progressBar.visibility = View.GONE
             return
         }
@@ -341,8 +476,10 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
 
         listAuditAnswer.forEach { detailAuditAnswer ->
             val score = detailAuditAnswer.score ?: 0
-            val tertuduhArray = detailAuditAnswer.listTertuduh?.map { it.name }?.toTypedArray() ?: emptyArray()
-            val temuanArray = detailAuditAnswer.listTertuduh?.map { it.temuan }?.toTypedArray() ?: emptyArray()
+            val tertuduhArray =
+                detailAuditAnswer.listTertuduh?.map { it.name }?.toTypedArray() ?: emptyArray()
+            val temuanArray =
+                detailAuditAnswer.listTertuduh?.map { it.temuan }?.toTypedArray() ?: emptyArray()
 
             apiServices.submitAnswer(
                 "Bearer $token",
@@ -377,7 +514,10 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
                         failedItems++
                         completedItems++
                         checkProgress(completedItems, failedItems, totalItems)
-                        Log.e("IsiFormAuditorFragment", "API Error: ${response.errorBody()?.string()}")
+                        Log.e(
+                            "IsiFormAuditorFragment",
+                            "API Error: ${response.errorBody()?.string()}"
+                        )
                     }
                 }
 
@@ -396,7 +536,11 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
         }
     }
 
-    private fun uploadPhotos(detailAuditAnswer: DetailAuditAnswer, token: String, callback: (Boolean) -> Unit) {
+    private fun uploadPhotos(
+        detailAuditAnswer: DetailAuditAnswer,
+        token: String,
+        callback: (Boolean) -> Unit
+    ) {
         val photosToUpload = detailAuditAnswer.listDetailFoto?.filter {
             (it.id ?: 0) <= 0 && it.uri != null
         }
@@ -414,8 +558,10 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
             val imageFile = createTempFileFromUri(photo.uri!!)
             if (imageFile != null) {
                 val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
-                val imagePart = MultipartBody.Part.createFormData("image_path", imageFile.name, requestFile)
-                val detailAuditAnswerIdBody = detailAuditAnswer.id.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                val imagePart =
+                    MultipartBody.Part.createFormData("image_path", imageFile.name, requestFile)
+                val detailAuditAnswerIdBody =
+                    detailAuditAnswer.id.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
                 apiServices.uploadPhoto(
                     "Bearer $token",
@@ -442,7 +588,10 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
                             }
                         } else {
                             allSuccess = false
-                            Log.e("IsiFormAuditorFragment", "Error body: ${response.errorBody()?.string()}")
+                            Log.e(
+                                "IsiFormAuditorFragment",
+                                "Error body: ${response.errorBody()?.string()}"
+                            )
                         }
 
                         completedPhotos++
@@ -474,17 +623,25 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
     private fun saveFormWithSignatures() {
         // Ensure we have all signatures
         if (!validateSignatures()) {
-            Toast.makeText(requireContext(), "Harap lengkapi semua tanda tangan", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Harap lengkapi semua tanda tangan",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
         // Create multipart files for signatures
-        val auditorSignaturePart = createMultipartFromFile(auditorSignatureFile!!, "auditor_signature")
-        val auditeeSignaturePart = createMultipartFromFile(auditeeSignatureFile!!, "auditee_signature")
-        val facilitatorSignaturePart = createMultipartFromFile(facilitatorSignatureFile!!, "facilitator_signature")
+        val auditorSignaturePart =
+            createMultipartFromFile(auditorSignatureFile!!, "auditor_signature")
+        val auditeeSignaturePart =
+            createMultipartFromFile(auditeeSignatureFile!!, "auditee_signature")
+        val facilitatorSignaturePart =
+            createMultipartFromFile(facilitatorSignatureFile!!, "facilitator_signature")
 
         // Create request body for audit answer ID
-        val auditAnswerIdBody = auditAnswerId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val auditAnswerIdBody =
+            auditAnswerId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
         // Call API to save form with signatures
         val token = sessionManager.getAuthToken()
@@ -504,7 +661,11 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
                 // Only update UI if the fragment is still attached
                 if (isAdded && _binding != null) {
                     if (!response.isSuccessful) {
-                        Toast.makeText(requireContext(), "Gagal menyimpan tanda tangan: ${response.message()}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Gagal menyimpan tanda tangan: ${response.message()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         return
                     }
                 }
@@ -519,7 +680,11 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
             override fun onFailure(call: Call<Any>, t: Throwable) {
                 // Only update UI if the fragment is still attached
                 if (isAdded && _binding != null) {
-                    Toast.makeText(requireContext(), "Network Error saat menyimpan tanda tangan: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Network Error saat menyimpan tanda tangan: ${t.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 Log.e("IsiFormAuditorFragment", "Signature upload failed: ${t.message}")
@@ -530,14 +695,19 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
     // Helper Methods
     private fun openCamera() {
         val file = File(requireContext().cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
-        imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", file)
+        imageUri = FileProvider.getUriForFile(
+            requireContext(),
+            "${requireContext().packageName}.provider",
+            file
+        )
         takePicture.launch(imageUri)
     }
 
     private fun createTempFileFromUri(uri: Uri): File? {
         try {
             val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, uri)
-            val file = File(requireContext().cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+            val file =
+                File(requireContext().cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
             val outputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
             outputStream.flush()
@@ -576,13 +746,22 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
         }
     }
 
+
     private fun checkAllOperationsComplete() {
         if (signatureCompleted && auditDataCompleted) {
             // Both operations completed, we can now navigate to home
             if (isAdded && _binding != null) {
                 binding.progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), "Semua data berhasil disimpan", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Semua data berhasil disimpan", Toast.LENGTH_SHORT)
+                    .show()
             }
+
+            // Clear local changes
+            localAuditAnswerChanges.clear()
+            localPhotos.clear()
+            auditorSignatureFile = null
+            auditeeSignatureFile = null
+            facilitatorSignatureFile = null
 
             // Navigate to the home fragment
             navToHomeAuditor()
@@ -623,7 +802,9 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
 
     override fun onScoreChanged(position: Int, score: Int) {
         if (position < listAuditAnswer.size) {
-            listAuditAnswer[position].score = score
+            val auditAnswer = listAuditAnswer[position]
+            auditAnswer.score = score
+            localAuditAnswerChanges[auditAnswer.id ?: 0] = auditAnswer.copy()
         }
     }
 }

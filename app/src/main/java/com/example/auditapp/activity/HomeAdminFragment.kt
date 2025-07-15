@@ -42,6 +42,14 @@ class HomeAdminFragment : Fragment() {
                 else -> "Role: Unknown"
             }
 
+            binding.boxAuditOffice.setOnClickListener {
+                val fragment = AuditOfficeAdminFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+
             binding.boxKonfigurasi.setOnClickListener {
                 val fragment = KonfigurasiFragment()
                 parentFragmentManager.beginTransaction()

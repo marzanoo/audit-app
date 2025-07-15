@@ -77,8 +77,8 @@ data class DetailAuditAnswer(
     @field:SerializedName("variabel")
     val variabel: String? = null,
 
-    @field:SerializedName("standar_foto")
-    val standarFoto: String? = null,
+    @field:SerializedName("list_standar_foto")
+    var listStandarFoto: MutableList<StandarFoto>? = null,
 
     var listDetailFoto: MutableList<DetailFoto>? = null,
 
@@ -121,6 +121,9 @@ data class DetailAuditAnswerUpdate(
 
     @SerializedName("standar_foto")
     val standarFoto: String? = null,
+
+    @field:SerializedName("list_standar_foto")
+    var listStandarFoto: MutableList<StandarFoto>? = null,
 
     @SerializedName("tema")
     val tema: String? = null,

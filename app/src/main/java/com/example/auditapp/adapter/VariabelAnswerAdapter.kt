@@ -12,32 +12,37 @@ import com.example.auditapp.model.VariabelFormAnswer
 
 class VariabelAnswerAdapter(
     private val listVariabel: List<VariabelFormAnswer>
-) : RecyclerView.Adapter<VariabelAnswerAdapter.ViewHolder>(){
+) : RecyclerView.Adapter<VariabelAnswerAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: ListItemVariabelAdapterBinding) :
-            RecyclerView.ViewHolder(binding.root) {
-                fun onBindItem(dataVariabelForm: VariabelFormAnswer){
-                    binding.tvStandarVariabel.text = dataVariabelForm.standar_variabel
-                    val BASE_URL = "http://192.168.19.204:8000/storage/"
-                    val imageUrl = BASE_URL + dataVariabelForm.standar_foto
-                    Glide.with(binding.root.context)
-                        .load(imageUrl)
-                        .placeholder(R.drawable.logo_wag)
-                        .error(R.drawable.logo_wag)
-                        .into(binding.imgVariabel)
-                    binding.tvVariabelDesc.text = dataVariabelForm.variabel
+        RecyclerView.ViewHolder(binding.root) {
+        fun onBindItem(dataVariabelForm: VariabelFormAnswer) {
+            binding.tvStandarVariabel.text = dataVariabelForm.standar_variabel
+            val BASE_URL = "http://124.243.134.244/storage/"
+            val imageUrl = BASE_URL + dataVariabelForm.standar_foto
+            Glide.with(binding.root.context)
+                .load(imageUrl)
+                .placeholder(R.drawable.logo_wag)
+                .error(R.drawable.logo_wag)
+                .into(binding.imgVariabel)
+            binding.tvVariabelDesc.text = dataVariabelForm.variabel
 
-                    val detailFotoAdapter = DetailFotoAdapter(dataVariabelForm.listDetailFoto.toMutableList(),
-                        object : DetailFotoAdapter.OnItemClickListener {
-                            override fun onDeleteClick(dataDetailFoto: DetailFoto) {
+            val detailFotoAdapter =
+                DetailFotoAdapter(dataVariabelForm.listDetailFoto.toMutableList(),
+                    object : DetailFotoAdapter.OnItemClickListener {
+                        override fun onDeleteClick(dataDetailFoto: DetailFoto) {
 
-                            }
-                        })
-                    binding.recyclerViewFoto.adapter = detailFotoAdapter
-                }
-            }
+                        }
+                    })
+            binding.recyclerViewFoto.adapter = detailFotoAdapter
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ListItemVariabelAdapterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ListItemVariabelAdapterBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return ViewHolder(binding)
     }
 

@@ -62,41 +62,6 @@
                 android:background="@drawable/rounder_border"
                 android:hint="Masukkan Area"
                 android:layout_marginBottom="6dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lantai"
-                android:layout_marginStart="6dp"
-                android:textStyle="bold"
-                android:layout_marginBottom="6dp"
-                android:textSize="18sp"/>
-
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/spinLantai"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:paddingLeft="14dp"
-                android:background="@drawable/rounder_border"
-                android:hint="Pilih Lantai"
-                android:layout_marginBottom="6dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PIC Area"
-                android:layout_marginStart="6dp"
-                android:textStyle="bold"
-                android:layout_marginBottom="6dp"
-                android:textSize="18sp"/>
-
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/spinPIC"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:paddingLeft="14dp"
-                android:background="@drawable/rounder_border"
-                android:hint="Pilih PIC"/>
         </LinearLayout>
 
         <LinearLayout

@@ -24,14 +24,6 @@ data class SingleAreaResponse (
     val data: Area? = null
 )
 
-data class PicAreaResponse (
-    @field:SerializedName("message")
-    val message: String? = null,
-
-    @field:SerializedName("data")
-    val data: Karyawan? = null
-)
-
 data class UpdateAreaResponse (
     @field:SerializedName("message")
     val message: String? = null,

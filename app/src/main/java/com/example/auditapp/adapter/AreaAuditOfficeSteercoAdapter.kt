@@ -12,7 +12,7 @@ import com.example.auditapp.model.Area
 class AreaAuditOfficeSteercoAdapter(
     private val listArea: MutableList<Area>,
     private val listener: OnItemClickListener
-) :RecyclerView.Adapter<AreaAuditOfficeSteercoAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<AreaAuditOfficeSteercoAdapter.ViewHolder>() {
     interface OnItemClickListener {
         fun onViewClick(dataArea: Area)
     }
@@ -21,7 +21,7 @@ class AreaAuditOfficeSteercoAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun onBindItem(dataArea: Area?) {
             binding.area.text = dataArea?.area
-            binding.PicArea.text = dataArea?.karyawans?.emp_name ?: "Tidak ada"
+//            binding.PicArea.text = dataArea?.karyawans?.emp_name ?: "Tidak ada"
 
             binding.tvLihat.setOnClickListener {
                 dataArea?.let { listener.onViewClick(it) }
@@ -34,7 +34,11 @@ class AreaAuditOfficeSteercoAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ListAreaAuditOfficeSteercoAdapterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ListAreaAuditOfficeSteercoAdapterBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return ViewHolder(binding)
     }
 

@@ -80,15 +80,15 @@
                 android:text="20"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:gravity="center"/>
+                android:gravity="center" />
         </LinearLayout>
 
         <View
             android:layout_width="8dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <LinearLayout
-            android:id="@+id/boxAuditOfficeSC"
+            android:id="@+id/boxAuditOffice"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -103,7 +103,7 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="10dp"
-                android:gravity="center"/>
+                android:gravity="center" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -111,7 +111,7 @@
                 android:text="Lihat"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:gravity="center"/>
+                android:gravity="center" />
         </LinearLayout>
     </LinearLayout>
 
@@ -130,24 +130,24 @@
             android:layout_height="wrap_content"
             android:text="Konfigurasi"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="> Konfigurasi Objek Audit"
-            android:padding="8dp"/>
+            android:padding="8dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="> Konfigurasi Form"
-            android:padding="8dp"/>
+            android:padding="8dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="> Konfigurasi Pengguna"
-            android:padding="8dp"/>
+            android:padding="8dp" />
     </LinearLayout>
 </LinearLayout>

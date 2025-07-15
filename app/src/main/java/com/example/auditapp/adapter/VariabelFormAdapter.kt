@@ -22,7 +22,7 @@ class VariabelFormAdapter(
         fun onBindItem(dataVariabelForm: VariabelForm?) {
             binding.variabel.text = dataVariabelForm?.variabel ?: "Tidak ada"
             binding.standarV.text = dataVariabelForm?.standar_variabel ?: "Tidak ada"
-            val BASE_URL = "http://192.168.19.204:8000/storage/"
+            val BASE_URL = "http://124.243.134.244/storage/"
             val imageUrl = BASE_URL + dataVariabelForm?.standar_foto
             Glide.with(binding.root.context)
                 .load(imageUrl)
@@ -42,7 +42,11 @@ class VariabelFormAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            ListVariabelFormAdapterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ListVariabelFormAdapterBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         return ViewHolder(binding)
     }
 

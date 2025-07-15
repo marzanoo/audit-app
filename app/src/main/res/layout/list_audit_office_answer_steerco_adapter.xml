@@ -13,7 +13,7 @@
         android:text="Kategori Form"
         android:textStyle="bold"
         android:textSize="18sp"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="8dp" />
 
     <TextView
         android:id="@+id/tvTemaForm"
@@ -22,7 +22,7 @@
         android:text="1.1 Perlengkapan yang tidak diperlukan"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:layout_marginBottom="6dp"/>
+        android:layout_marginBottom="6dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginBottom="4dp"
-        android:layout_marginStart="8dp"/>
+        android:layout_marginStart="8dp" />
 
     <TextView
         android:id="@+id/tvStandarVariabel"
@@ -40,16 +40,16 @@
         android:text="Tidak ada barang/ATK yang rusak..."
         android:textSize="14sp"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="8dp" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="125dp"
-        android:layout_height="125dp"
-        android:id="@+id/iv_StandarFoto"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_standar_foto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/grey_slate2"/>
+        android:layout_marginBottom="8dp" />
 
     <TextView
         android:id="@+id/tvVariabel"
@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:text="Ada barang/ATK yang rusak"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="4dp"/>
+        android:layout_marginBottom="4dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -85,15 +85,16 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp"/>
+                android:layout_marginBottom="4dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_tertuduh"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -107,7 +108,7 @@
             android:textStyle="bold"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="4dp"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="8dp" />
 
         <TextView
             android:id="@+id/tvScore"
@@ -118,7 +119,7 @@
             android:textStyle="bold"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="4dp"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="8dp" />
 
     </LinearLayout>
 </LinearLayout>

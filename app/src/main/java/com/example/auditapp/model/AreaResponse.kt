@@ -45,12 +45,6 @@ data class Area(
     @field:SerializedName("lantai")
     val lantai: Lantai? = null,
 
-    @field:SerializedName("pic_area")
-    val pic_area: String? = null,
-
-    @field:SerializedName("karyawans")
-    val karyawans: Karyawan? = null,
-
     @field:SerializedName("created_at")
     val created_at: String? = null,
 

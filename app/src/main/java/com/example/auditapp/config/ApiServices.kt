@@ -29,6 +29,7 @@ import com.example.auditapp.model.RegisterResponse
 import com.example.auditapp.model.ResetPasswordRequest
 import com.example.auditapp.model.ResetPasswordResponse
 import com.example.auditapp.model.SingleAreaResponse
+import com.example.auditapp.model.StandarFotoResponse
 import com.example.auditapp.model.TemaForm
 import com.example.auditapp.model.TemaFormResponse
 import com.example.auditapp.model.UpdateAreaResponse
@@ -42,9 +43,9 @@ import com.example.auditapp.model.VerifikasiOtpRequest
 import com.example.auditapp.model.VerifikasiOtpResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.Response
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
@@ -100,23 +101,36 @@ interface ApiServices {
     fun getTotalLantai(@Header("Authorization") token: String): Call<LantaiResponse>
 
     @POST("lantai")
-    fun createLantai(@Header("Authorization") token: String, @Body lantai: Lantai): Call<LantaiResponse>
+    fun createLantai(
+        @Header("Authorization") token: String,
+        @Body lantai: Lantai
+    ): Call<LantaiResponse>
 
     //Area
     @GET("area")
     fun getArea(@Header("Authorization") token: String): Call<AreaResponse>
 
     @POST("area")
-    fun createArea(@Header("Authorization") token: String, @Body area: Area): Call<UpdateAreaResponse>
+    fun createArea(
+        @Header("Authorization") token: String,
+        @Body area: Area
+    ): Call<UpdateAreaResponse>
 
     @PUT("area/{id}")
-    fun updateArea(@Header("Authorization") token: String, @Path("id") id: Int, @Body area: Area): Call<UpdateAreaResponse>
+    fun updateArea(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int,
+        @Body area: Area
+    ): Call<UpdateAreaResponse>
 
     @DELETE("area/{id}")
     fun deleteArea(@Header("Authorization") token: String, @Path("id") id: Int): Call<Void>
 
     @GET("area/{id}")
-    fun getAreaById(@Header("Authorization") token: String, @Path("id") id: Int): Call<SingleAreaResponse>
+    fun getAreaById(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<SingleAreaResponse>
 
     @GET("total-area")
     fun getTotalArea(@Header("Authorization") token: String): Call<AreaResponse>
@@ -134,90 +148,168 @@ interface ApiServices {
     fun getForm(@Header("Authorization") token: String): Call<FormResponse>
 
     @POST("form")
-    fun createForm(@Header("Authorization") token: String, @Body form: Form): Call<UpdateFormResponse>
+    fun createForm(
+        @Header("Authorization") token: String,
+        @Body form: Form
+    ): Call<UpdateFormResponse>
 
     @PUT("form/{id}")
-    fun updateForm(@Header("Authorization") token: String, @Path("id") id: Int): Call<UpdateFormResponse>
+    fun updateForm(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<UpdateFormResponse>
 
     @DELETE("form/{id}")
     fun deleteForm(@Header("Authorization") token: String, @Path("id") id: Int): Call<Void>
 
     //Tema
     @GET("tema-form/{id}")
-    fun getTemaForm(@Header("Authorization") token: String, @Path("id") id: Int): Call<TemaFormResponse>
+    fun getTemaForm(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<TemaFormResponse>
 
     @DELETE("tema-form/{id}")
     fun deleteTemaForm(@Header("Authorization") token: String, @Path("id") id: Int): Call<Void>
 
     @POST("tema-form")
-    fun createTemaForm(@Header("Authorization") token: String, @Body temaForm: TemaForm): Call<UpdateTemaFormResponse>
+    fun createTemaForm(
+        @Header("Authorization") token: String,
+        @Body temaForm: TemaForm
+    ): Call<UpdateTemaFormResponse>
 
     @GET("tema-form-single/{id}")
-    fun getTemaFormById(@Header("Authorization") token: String, @Path("id") id: Int): Call<UpdateTemaFormResponse>
+    fun getTemaFormById(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<UpdateTemaFormResponse>
 
     @PUT("tema-form/{id}")
-    fun updateTemaForm(@Header("Authorization") token: String, @Path("id") id: Int, @Body tema: TemaForm): Call<UpdateTemaFormResponse>
+    fun updateTemaForm(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int,
+        @Body tema: TemaForm
+    ): Call<UpdateTemaFormResponse>
 
     //Variabel
     @GET("variabel-form/{id}")
-    fun getVariabelForm(@Header("Authorization") token: String, @Path("id") id: Int): Call<VariabelFormResponse>
+    fun getVariabelForm(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<VariabelFormResponse>
 
     @DELETE("variabel-form/{id}")
     fun deleteVariabelForm(@Header("Authorization") token: String, @Path("id") id: Int): Call<Void>
 
-//    @POST("variabel-form")
+    //    @POST("variabel-form")
 //    fun createVariabelForm(@Header("Authorization") token: String, @Body variabelForm: VariabelForm): Call<UpdateVariabelFormResponse>
     @Multipart
     @POST("variabel-form")
-    fun createVariabelForm(@Header("Authorization") token: String, @Part("tema_form_id") temaFormId: RequestBody, @Part("variabel") variabel: RequestBody, @Part("standar_variabel") standarVariabel: RequestBody, @Part standarFoto: MultipartBody.Part?): Call<UpdateVariabelFormResponse>
+    fun createVariabelForm(
+        @Header("Authorization") token: String,
+        @Part("tema_form_id") temaFormId: RequestBody,
+        @Part("variabel") variabel: RequestBody,
+        @Part("standar_variabel") standarVariabel: RequestBody,
+        @Part standarFoto: MultipartBody.Part?
+    ): Call<UpdateVariabelFormResponse>
+
+    @GET("standar-variabel-foto/{variable_form_id}")
+    fun getStandarFotoVariabel(
+        @Header("Authorization") token: String,
+        @Path("variable_form_id") variableFormId: Int
+    ): Call<StandarFotoResponse>
 
     @PUT("variabel-form/{id}")
-    fun updateVariabelForm(@Header("Authorization") token: String, @Path("id") id: Int, @Body variabelForm: VariabelForm): Call<UpdateVariabelFormResponse>
+    fun updateVariabelForm(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int,
+        @Body variabelForm: VariabelForm
+    ): Call<UpdateVariabelFormResponse>
 
 //    @PUT("variabel-form/{id}")
 //    fun updateVariabelFormWithImage(@Header("Authorization") token: String, @Path("id") id: Int, @Body variabelForm: VariabelForm, @Part standarFoto: MultipartBody.Part?): Call<UpdateVariabelFormResponse>
 
     @Multipart
     @POST("variabel-form/{id}")
-    fun updateVariabelFormWithImage(@Header("Authorization") token: String, @Path("id") variabelFormId: Int, @Part("_method") method: RequestBody, @Part("tema_form_id") temaFormId: RequestBody, @Part("variabel") variabel: RequestBody, @Part("standar_variabel") standarVariabel: RequestBody, @Part standarFoto: MultipartBody.Part?): Call<UpdateVariabelFormResponse>
+    fun updateVariabelFormWithImage(
+        @Header("Authorization") token: String,
+        @Path("id") variabelFormId: Int,
+        @Part("_method") method: RequestBody,
+        @Part("tema_form_id") temaFormId: RequestBody,
+        @Part("variabel") variabel: RequestBody,
+        @Part("standar_variabel") standarVariabel: RequestBody,
+        @Part standarFoto: MultipartBody.Part?
+    ): Call<UpdateVariabelFormResponse>
 
     @GET("variabel-form-single/{id}")
-    fun getVariabelFormById(@Header("Authorization") token: String, @Path("id") id: Int): Call<UpdateVariabelFormResponse>
+    fun getVariabelFormById(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<UpdateVariabelFormResponse>
 
     @GET("total-variabel")
     fun getTotalVariabel(@Header("Authorization") token: String): Call<VariabelFormResponse>
 
     //User
     @GET("user/{id}")
-    fun getUserById(@Header("Authorization") token: String, @Path("id") id: Int): Call<UserResponseGetById>
+    fun getUserById(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<UserResponseGetById>
 
     //Audit Answer
     @POST("audit-answer-insert")
-    fun createAuditAnswer(@Header("Authorization") token: String, @Body auditAnswer: AuditAnswerItem): Call<AuditAnswerResponseUpdate>
+    fun createAuditAnswer(
+        @Header("Authorization") token: String,
+        @Body auditAnswer: AuditAnswerItem
+    ): Call<AuditAnswerResponseUpdate>
 
     @GET("audit-answer-total")
     fun getAuditAnswerTotal(@Header("Authorization") token: String): Call<AuditAnswerResponse>
 
     @GET("audit-answer-area/{areaId}")
-    fun getAuditAnswerByArea(@Header("Authorization") token: String, @Path("areaId") areaId: Int): Call<AuditAnswerResponse>
+    fun getAuditAnswerByArea(
+        @Header("Authorization") token: String,
+        @Path("areaId") areaId: Int
+    ): Call<AuditAnswerResponse>
 
     @GET("audit-answer-auditor/{id}")
-    fun getAuditAnswerAuditor(@Header("Authorization") token: String, @Path("id") id: Int): Call<AuditAnswerResponse>
+    fun getAuditAnswerAuditor(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<AuditAnswerResponse>
 
     @GET("audit-answer/{id}")
-    fun getAuditAnswerById(@Header("Authorization") token: String, @Path("id") id: Int): Call<AuditAnswerResponseUpdate>
+    fun getAuditAnswerById(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<AuditAnswerResponseUpdate>
 
     //Detail Audit Answer
     @GET("detail-audit-answer/{id}")
-    fun getDetailAuditAnswer(@Header("Authorization") token: String, @Path("id") id: Int): Call<DetailAuditAnswerResponse>
+    fun getDetailAuditAnswer(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<DetailAuditAnswerResponse>
 
     @FormUrlEncoded
     @POST("detail-audit-answer/{auditAnswerId}/detail/{detailAuditAnswerId}")
-    fun submitAnswer(@Header("Authorization") token: String, @Path("auditAnswerId") auditAnswerId: Int, @Path("detailAuditAnswerId") detailAuditAnswerId: Int, @Field("score") score: Int, @Field("tertuduh[]") tertuduh: Array<String>, @Field("temuan[]") temuan: Array<Int>): Call<Any>
+    fun submitAnswer(
+        @Header("Authorization") token: String,
+        @Path("auditAnswerId") auditAnswerId: Int,
+        @Path("detailAuditAnswerId") detailAuditAnswerId: Int,
+        @Field("score") score: Int,
+        @Field("tertuduh[]") tertuduh: Array<String>,
+        @Field("temuan[]") temuan: Array<Int>
+    ): Call<Any>
 
     @Multipart
     @POST("detail-audit-answer/upload-photo")
-    fun uploadPhoto(@Header("Authorization") token: String, @Part("detail_audit_answer_id") detailAuditAnswerId: RequestBody, @Part image_path: MultipartBody.Part): Call<DetailFotoResponseUpdate>
+    fun uploadPhoto(
+        @Header("Authorization") token: String,
+        @Part("detail_audit_answer_id") detailAuditAnswerId: RequestBody,
+        @Part image_path: MultipartBody.Part
+    ): Call<DetailFotoResponseUpdate>
 
     @Multipart
     @POST("detail-audit-answer/upload-signature")
@@ -230,14 +322,23 @@ interface ApiServices {
     ): Call<Any>
 
     @GET("detail-audit-answer-show/{auditAnswerId}")
-    fun getDetailAuditAnswerShow(@Header("Authorization") token: String, @Path("auditAnswerId") auditAnswerId: Int): Call<DetailAuditAnswerResponseUpdate>
+    fun getDetailAuditAnswerShow(
+        @Header("Authorization") token: String,
+        @Path("auditAnswerId") auditAnswerId: Int
+    ): Call<DetailAuditAnswerResponseUpdate>
 
     //Audit Office
     @GET("audit-office/detail/{id}")
-    fun getDetailAuditOffice(@Header("Authorization") token: String, @Path("id") id: Int): Call<DetailAuditAnswerResponseUpdate>
+    fun getDetailAuditOffice(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<DetailAuditAnswerResponseUpdate>
 
     @GET("audit-office/download/{id}")
     @Streaming
-    fun downloadAuditOfficeExcel(@Header("Authorization") token:String, @Path("id") id: Int): Call<AuditExcelResponse>
+    fun downloadAuditOfficeExcel(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<AuditExcelResponse>
 
 }

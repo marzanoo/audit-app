@@ -18,6 +18,7 @@ import com.example.auditapp.helper.SessionManager
 import com.example.auditapp.model.AuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailAuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailAuditAnswerUpdate
+import com.example.auditapp.model.StandarFoto
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -43,7 +44,7 @@ class AuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefres
         fun newInstance(auditAnswerId: Int?): Fragment {
             val fragment = AuditOfficeAnswerSteercoFragment()
             val args = Bundle()
-            args.putInt(ARG_AUDITANSWER_ID, auditAnswerId?: 0)
+            args.putInt(ARG_AUDITANSWER_ID, auditAnswerId ?: 0)
             fragment.arguments = args
             return fragment
         }
@@ -91,22 +92,26 @@ class AuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefres
                     val detailAuditAnswerResponse = response.body()
                     detailAuditAnswerResponse?.data?.let { data ->
                         listAuditOfficeSteerco.clear()
-                        data.filterNotNull().forEach{
-                            listAuditOfficeSteerco.add(it)
+                        data.filterNotNull().forEach { item ->
+                            // Map single standarFoto to listStandarFoto if necessary
+                            if (item.listStandarFoto == null && item.standarFoto != null) {
+                                item.listStandarFoto = mutableListOf(
+                                    StandarFoto(
+                                        id = 0,
+                                        image_path = item.standarFoto
+                                    )
+                                )
+                            }
+                            listAuditOfficeSteerco.add(item)
                         }
                         auditOfficeSteercoAdapter.notifyDataSetChanged()
-
-                        loadSignature(
-                            detailAuditAnswerResponse.auditor_signature,
-                            detailAuditAnswerResponse.auditee_signature,
-                            detailAuditAnswerResponse.facilitator_signature
-                        )
                     }
                 }
             }
 
             override fun onFailure(call: Call<DetailAuditAnswerResponseUpdate>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
     }
@@ -140,12 +145,17 @@ class AuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefres
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), "Fetching Data Error: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Fetching Data Error: ${response.message()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             override fun onFailure(call: Call<AuditAnswerResponseUpdate>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
     }
@@ -155,7 +165,7 @@ class AuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefres
         auditeeSignature: String?,
         facilitatorSignature: String?
     ) {
-        val BASE_URL = "http://192.168.19.90:8000/storage/"
+        val BASE_URL = "http://124.243.134.244/storage/"
         auditorSignature?.let {
             Glide.with(requireContext())
                 .load(BASE_URL + it)

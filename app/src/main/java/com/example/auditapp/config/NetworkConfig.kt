@@ -9,7 +9,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 
 class NetworkConfig {
-    val BASE_URL: String = "http://192.168.19.204:8000/api/"
+    val BASE_URL: String = "http://124.243.134.244/api/"
 
     private fun setOkHttp(): OkHttpClient {
         val interceptor = HttpLoggingInterceptor().apply {

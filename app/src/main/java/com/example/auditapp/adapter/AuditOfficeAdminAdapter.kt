@@ -18,16 +18,16 @@ class AuditOfficeAdminAdapter(
             binding.tvKategoriForm.text = dataAuditOfficeAdmin.kategori
             binding.tvTemaForm.text = dataAuditOfficeAdmin.tema
             binding.tvStandarVariabel.text = dataAuditOfficeAdmin.standarVariabel
-            val BASE_URL = "http://192.168.19.204:8000/storage/"
-            val imageStandarUrl = BASE_URL + dataAuditOfficeAdmin.standarFoto
-            Glide.with(binding.root.context)
-                .load(imageStandarUrl)
-                .placeholder(R.drawable.logo_wag)
-                .error(R.drawable.logo_wag)
-                .into(binding.ivStandarFoto)
-            binding.tvVariabel.text = dataAuditOfficeAdmin.variabel
+            val standarFotoAdapter = FotoStandarVariabelAdapter(
+                dataAuditOfficeAdmin.listStandarFoto?.toMutableList() ?: mutableListOf()
+            )
+            binding.rvStandarFoto.apply {
+                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                adapter = standarFotoAdapter
+            }
             dataAuditOfficeAdmin.images.let { images ->
-                val detailFotoAdapter = DetailFotoAnswerAdminAdapter(images?.toMutableList() ?: mutableListOf())
+                val detailFotoAdapter =
+                    DetailFotoAnswerAdminAdapter(images?.toMutableList() ?: mutableListOf())
                 binding.rvFoto.apply {
                     layoutManager = LinearLayoutManager(binding.root.context)
                     adapter = detailFotoAdapter
@@ -35,7 +35,8 @@ class AuditOfficeAdminAdapter(
             }
 
             dataAuditOfficeAdmin.auditees.let { auditees ->
-                val tertuduhAdapter = TertuduhAnswerAdminAdapter(auditees?.toMutableList() ?: mutableListOf())
+                val tertuduhAdapter =
+                    TertuduhAnswerAdminAdapter(auditees?.toMutableList() ?: mutableListOf())
                 binding.rvTertuduh.apply {
                     layoutManager = LinearLayoutManager(binding.root.context)
                     adapter = tertuduhAdapter
@@ -47,7 +48,11 @@ class AuditOfficeAdminAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ListAuditOfficeAnswerAdminAdapterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ListAuditOfficeAnswerAdminAdapterBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return ViewHolder(binding)
     }
 
