@@ -29,6 +29,7 @@ import com.example.auditapp.model.RegisterResponse
 import com.example.auditapp.model.ResetPasswordRequest
 import com.example.auditapp.model.ResetPasswordResponse
 import com.example.auditapp.model.SingleAreaResponse
+import com.example.auditapp.model.SingleKaryawanResponse
 import com.example.auditapp.model.StandarFotoResponse
 import com.example.auditapp.model.TemaForm
 import com.example.auditapp.model.TemaFormResponse
@@ -89,6 +90,9 @@ interface ApiServices {
 
     @POST("verify-otp")
     fun verifyOtp(@Body request: VerifikasiOtpRequest): retrofit2.Call<VerifikasiOtpResponse>
+
+    @GET("karyawan/{nik}")
+    fun getKaryawanByNik(@Path("nik") nik: String): Call<SingleKaryawanResponse>
 
     //Lantai
     @GET("lantai")

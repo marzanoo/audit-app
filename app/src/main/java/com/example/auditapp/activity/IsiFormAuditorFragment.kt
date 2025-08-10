@@ -649,6 +649,7 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
             Toast.makeText(requireContext(), "Token tidak valid", Toast.LENGTH_SHORT).show()
             return
         }
+        
 
         apiServices.uploadSignature(
             "Bearer $token",

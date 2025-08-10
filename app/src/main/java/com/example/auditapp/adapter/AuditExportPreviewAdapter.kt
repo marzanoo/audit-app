@@ -23,7 +23,7 @@ class AuditExportPreviewAdapter(
 
             val BASE_URL = "http://124.243.134.244/storage/"
             if (!data.standarFoto.isNullOrEmpty()) {
-                val imageUrl = BASE_URL + data.standarFoto
+                val imageUrl = BASE_URL + data.listStandarFoto?.firstOrNull()?.image_path
                 Glide.with(binding.root.context)
                     .load(imageUrl)
                     .placeholder(R.drawable.logo_wag)

@@ -1,6 +1,10 @@
 package com.example.auditapp.activity
 
+import android.app.DownloadManager
+import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +20,7 @@ import com.example.auditapp.config.NetworkConfig
 import com.example.auditapp.databinding.FragmentAuditOfficeAnswerAdminBinding
 import com.example.auditapp.helper.SessionManager
 import com.example.auditapp.model.AuditAnswerResponseUpdate
+import com.example.auditapp.model.AuditExcelResponse
 import com.example.auditapp.model.DetailAuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailAuditAnswerUpdate
 import com.example.auditapp.model.StandarFoto
@@ -31,6 +36,7 @@ class AuditOfficeAnswerAdminFragment : Fragment(), SwipeRefreshLayout.OnRefreshL
     private lateinit var apiServices: ApiServices
     private lateinit var auditOfficeAdminAdapter: AuditOfficeAdminAdapter
     private val listAuditOfficeAdmin = mutableListOf<DetailAuditAnswerUpdate>()
+    private var area: String = ""
 
     companion object {
         private const val ARG_AUDITANSWER_ID = "auditAnswerId"
@@ -74,12 +80,89 @@ class AuditOfficeAnswerAdminFragment : Fragment(), SwipeRefreshLayout.OnRefreshL
             parentFragmentManager.popBackStack()
         }
 
+//        binding.btnEkspor.setOnClickListener {
+//            showExportPreview()
+//        }
+
         binding.btnEkspor.setOnClickListener {
-            showExportPreview()
+            downloadExcel()
         }
+
         setupRecylerView()
         loadDataFromApi()
         getAuditAnswerById()
+    }
+
+    private fun downloadFileWithManager(fileUrl: String, filename: String) {
+        try {
+            val request = DownloadManager.Request(Uri.parse(fileUrl))
+                .setTitle("Excel Export $area")
+                .setDescription("Downloading audit report for $area")
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
+                .setMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+            val downloadManager =
+                requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            downloadManager.enqueue(request)
+
+            Toast.makeText(
+                requireContext(),
+                "Downloading file to Downloads/$filename",
+                Toast.LENGTH_LONG
+            ).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(
+                requireContext(),
+                "Error saat mendownload file: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun downloadExcel() {
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak tersedia", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        apiServices.downloadAuditOfficeExcel("Bearer $token", auditAnswerId).enqueue(object :
+            Callback<AuditExcelResponse> {  // Buat class untuk response JSON
+            override fun onResponse(
+                call: Call<AuditExcelResponse>,
+                response: Response<AuditExcelResponse>
+            ) {
+//                binding.progressDownload.visibility = View.GONE
+                if (response.isSuccessful && response.body() != null) {
+                    val fileUrl = response.body()?.fileUrl
+                    if (!fileUrl.isNullOrEmpty()) {
+                        downloadFileWithManager(
+                            fileUrl,
+                            response.body()?.fileName ?: "audit_excel.xlsx"
+                        )
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "URL file tidak tersedia",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error: ${response.code()} - ${response.message()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AuditExcelResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        })
     }
 
     private fun showExportPreview() {

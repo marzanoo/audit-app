@@ -13,7 +13,18 @@ class KaryawanResponse {
     val data: List<Karyawan>? = null
 }
 
-data class Karyawan (
+data class SingleKaryawanResponse(
+    val emp_id: String?,
+    val emp_name: String?,
+    val position_title: String?,
+    val dept: String?,
+    val remarks: String?,
+    val created_at: String?,
+    val updated_at: String?,
+    val email: String?
+)
+
+data class Karyawan(
     @field:SerializedName("emp_id")
     val emp_id: String? = null,
 
@@ -30,6 +41,6 @@ data class Karyawan (
     val remarks: String? = null
 ) : Serializable {
     override fun toString(): String {
-        return emp_name?: ""
+        return emp_name ?: ""
     }
 }

@@ -14,6 +14,7 @@
         android:layout_gravity="center"
         android:src="@drawable/logo_wag"
         android:layout_marginTop="30sp" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,21 +23,21 @@
         android:textSize="30dp"
         android:textStyle="bold"
         android:layout_gravity="center"
-        android:gravity="center"/>
-
-    <EditText
-        android:id="@+id/fullnameET"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Fullname"
-        android:inputType="text" />
+        android:gravity="center" />
 
     <EditText
         android:id="@+id/nikET"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="NIK"
-        android:inputType="number"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/fullnameET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Fullname"
+        android:inputType="text"
         android:layout_marginTop="16dp" />
 
     <EditText
@@ -79,7 +80,7 @@
             android:text="Login"
             android:textColor="#0000FF"
             android:textStyle="bold"
-            android:clickable="true"/>
+            android:clickable="true" />
     </LinearLayout>
 
     <Button
