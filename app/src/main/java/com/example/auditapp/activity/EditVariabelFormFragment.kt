@@ -277,7 +277,7 @@ class EditVariabelFormFragment : Fragment() {
             standar_variabel = standar,
             standar_foto = currentImageUrl
         )
-        variabelFormId?.let { id ->
+        variabelFormId.let { id ->
             apiServices.updateVariabelForm("Bearer $token", id, variabelForm).enqueue(object :
                 Callback<UpdateVariabelFormResponse> {
                 override fun onResponse(

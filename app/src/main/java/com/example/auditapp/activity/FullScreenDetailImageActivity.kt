@@ -1,30 +1,31 @@
 package com.example.auditapp.activity
 
 import android.os.Bundle
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.example.auditapp.R
+import com.example.auditapp.databinding.ActivityFullScreenDetailImageBinding
 
-class FullScreenImageActivity : AppCompatActivity() {
+class FullScreenDetailImageActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_IMAGE_URI = "extra_image_uri"
     }
 
+    private lateinit var binding: ActivityFullScreenDetailImageBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_full_screen_image)
-        val BASE_URL = "http://124.243.134.244/storage/"
-        val imageView = findViewById<ImageView>(R.id.fullScreenImageView)
+        binding = ActivityFullScreenDetailImageBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         val imageUri = intent.getStringExtra(EXTRA_IMAGE_URI)
         if (imageUri != null) {
             Glide.with(this)
-                .load(BASE_URL + imageUri)
-                .into(imageView)
+                .load(imageUri)
+                .into(binding.fullScreenDetailImageView)
         }
 
         // Close activity when clicking the image
-        imageView.setOnClickListener {
+        binding.fullScreenDetailImageView.setOnClickListener {
             finish()
         }
     }

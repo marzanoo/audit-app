@@ -42,6 +42,9 @@
             android:name=".activity.FullScreenImageActivity"
             android:exported="true"></activity>
         <activity
+            android:name=".activity.FullScreenDetailImageActivity"
+            android:exported="true"></activity>
+        <activity
             android:name=".activity.ForgotPasswordEmailActivity"
             android:exported="true"></activity>
         <activity

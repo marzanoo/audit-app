@@ -7,6 +7,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.auditapp.R
+import com.example.auditapp.activity.FullScreenDetailImageActivity
 import com.example.auditapp.activity.FullScreenImageActivity
 import com.example.auditapp.databinding.ListItemFotoAdapterBinding
 import com.example.auditapp.model.DetailFoto
@@ -33,8 +34,8 @@ class DetailFotoAdapter(
                     val imageUri = dataDetailFoto.uri?.toString() ?: dataDetailFoto.image_path
                     if (imageUri != null) {
                         val intent =
-                            Intent(binding.root.context, FullScreenImageActivity::class.java)
-                        intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, imageUri)
+                            Intent(binding.root.context, FullScreenDetailImageActivity::class.java)
+                        intent.putExtra(FullScreenDetailImageActivity.EXTRA_IMAGE_URI, imageUri)
                         binding.root.context.startActivity(intent)
                     }
                 }
