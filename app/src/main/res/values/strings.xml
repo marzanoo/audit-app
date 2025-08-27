@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AuditApp</string>
+    <string name="detail_denda_underlined"><u>Lihat Detail ></u></string>
 </resources>

@@ -17,11 +17,13 @@ import com.example.auditapp.databinding.FragmentListAuditOfficeAnswerSteercoBind
 import com.example.auditapp.helper.SessionManager
 import com.example.auditapp.model.AuditAnswerItem
 import com.example.auditapp.model.AuditAnswerResponse
+import com.example.auditapp.model.AuditAnswerResponseUpdate
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ListAuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, ListAuditOfficeSteercoAdapter.OnItemClickListener {
+class ListAuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
+    ListAuditOfficeSteercoAdapter.OnItemClickListener {
     private var _binding: FragmentListAuditOfficeAnswerSteercoBinding? = null
     private val binding get() = _binding!!
     private var areaId: Int = 0
@@ -42,7 +44,7 @@ class ListAuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRe
         fun newInstance(areaId: Int?): Fragment {
             val fragment = ListAuditOfficeAnswerSteercoFragment()
             val args = Bundle()
-            args.putInt(ARG_AREA_ID, areaId?: 0)
+            args.putInt(ARG_AREA_ID, areaId ?: 0)
             fragment.arguments = args
             return fragment
         }
@@ -76,6 +78,54 @@ class ListAuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRe
             .commit()
     }
 
+    override fun onApproveClick(dataAuditOfficeSteerco: AuditAnswerItem) {
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak tersedia", Toast.LENGTH_SHORT).show()
+            return
+        }
+        apiServices.approveAuditAnswer("Bearer $token", dataAuditOfficeSteerco.id ?: 0)
+            .enqueue(object :
+                Callback<AuditAnswerResponseUpdate> {
+                override fun onResponse(
+                    call: Call<AuditAnswerResponseUpdate>,
+                    response: Response<AuditAnswerResponseUpdate>
+                ) {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        responseBody?.let {
+                            Toast.makeText(
+                                requireContext(),
+                                "Approval Success: ${it.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            loadDataFromApi() // Refresh data after approval
+                        } ?: run {
+                            Toast.makeText(
+                                requireContext(),
+                                "Response body is null",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Error: ${response.code()} ${response.message()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<AuditAnswerResponseUpdate>, t: Throwable) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Network Error: ${t.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
+    }
+
     private fun loadDataFromApi() {
         val token = sessionManager.getAuthToken()
         if (token.isNullOrEmpty()) {
@@ -106,7 +156,8 @@ class ListAuditOfficeAnswerSteercoFragment : Fragment(), SwipeRefreshLayout.OnRe
             }
 
             override fun onFailure(call: Call<AuditAnswerResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
     }

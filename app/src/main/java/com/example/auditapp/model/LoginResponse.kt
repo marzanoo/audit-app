@@ -30,4 +30,7 @@ class LoginResponse {
 
     @field:SerializedName("id")
     val id: Int? = null
+
+    @field:SerializedName("nik")
+    val nik: String? = null
 }

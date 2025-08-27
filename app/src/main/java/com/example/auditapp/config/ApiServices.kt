@@ -13,8 +13,10 @@ import com.example.auditapp.model.DetailAuditAnswerResponseUpdate
 import com.example.auditapp.model.DetailFotoResponse
 import com.example.auditapp.model.DetailFotoResponseUpdate
 import com.example.auditapp.model.ExcelDownloadResponse
+import com.example.auditapp.model.FinesResponse
 import com.example.auditapp.model.Form
 import com.example.auditapp.model.FormResponse
+import com.example.auditapp.model.KaryawanFinesResponse
 import com.example.auditapp.model.KaryawanResponse
 import com.example.auditapp.model.Lantai
 import com.example.auditapp.model.LantaiResponse
@@ -23,6 +25,8 @@ import com.example.auditapp.model.LoginResponse
 import com.example.auditapp.model.LogoutResponse
 import com.example.auditapp.model.OtpRequest
 import com.example.auditapp.model.OtpResponse
+import com.example.auditapp.model.PaymentRequest
+import com.example.auditapp.model.PaymentResponse
 import com.example.auditapp.model.PicAreaResponse
 import com.example.auditapp.model.RegisterRequest
 import com.example.auditapp.model.RegisterResponse
@@ -60,6 +64,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.PartMap
 import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.Streaming
 
 interface ApiServices {
@@ -262,6 +267,12 @@ interface ApiServices {
     ): Call<UserResponseGetById>
 
     //Audit Answer
+    @PUT("audit-answer-approve/{id}")
+    fun approveAuditAnswer(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<AuditAnswerResponseUpdate>
+
     @POST("audit-answer-insert")
     fun createAuditAnswer(
         @Header("Authorization") token: String,
@@ -345,4 +356,37 @@ interface ApiServices {
         @Path("id") id: Int
     ): Call<AuditExcelResponse>
 
+    //Payment
+    @GET("payment/fines/{empId}")
+    fun getFines(
+        @Header("Authorization") token: String,
+        @Path("empId") empId: String
+    ): Call<FinesResponse>
+
+    @Multipart
+    @POST("payment/fines/{empId}/submit")
+    fun submitPayment(
+        @Header("Authorization") token: String,
+        @Path("empId") empId: String,
+        @Part("amount") amount: RequestBody,
+        @Part evidence: MultipartBody.Part
+    ): Call<PaymentResponse>
+
+    //Jika Perlu Approve dari mobile
+    @GET("payment/fines/{paymentId}/approve")
+    fun approvePayment(
+        @Header("Authorization") token: String,
+        @Path("paymentId") paymentId: Int
+    ): Call<PaymentResponse>
+
+    @POST("payment-fines/submit")
+    fun submitPaymentFines(
+        @Header("Authorization") token: String,
+        @Body paymentData: PaymentRequest
+    ): Call<PaymentResponse>
+
+    @GET("/api/search-karyawan")
+    fun searchKaryawan(
+        @Query("q") query: String
+    ): Call<List<KaryawanFinesResponse>>
 }

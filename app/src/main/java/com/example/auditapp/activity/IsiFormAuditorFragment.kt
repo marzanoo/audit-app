@@ -1,6 +1,7 @@
 package com.example.auditapp.activity
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -11,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -649,7 +651,7 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
             Toast.makeText(requireContext(), "Token tidak valid", Toast.LENGTH_SHORT).show()
             return
         }
-        
+
 
         apiServices.uploadSignature(
             "Bearer $token",
@@ -788,8 +790,19 @@ class IsiFormAuditorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
 
     override fun onTakePictureClick(position: Int) {
         selectedPosition = position
-
+        val viewHolder = binding.recyclerViewForm.findViewHolderForAdapterPosition(position)
+                as? ListFormAuditorAdapter.ViewHolder
         // Check for camera permission
+
+        viewHolder?.let {
+            it.binding.etTertuduh.clearFocus()
+            it.binding.etTemuan.clearFocus()
+            it.binding.etScore.clearFocus()
+
+            val imm =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(it.binding.root.windowToken, 0)
+        }
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.CAMERA

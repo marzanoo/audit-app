@@ -25,7 +25,8 @@
                 android:textSize="20sp"
                 android:maxLines="2"
                 android:text="Auditor"
-                android:textAppearance="@style/TextAppearance.AppCompat"/>
+                android:textAppearance="@style/TextAppearance.AppCompat" />
+
             <TextView
                 android:id="@+id/auditor"
                 android:layout_width="0dp"
@@ -34,7 +35,7 @@
                 android:textSize="18sp"
                 android:maxLines="2"
                 android:ellipsize="end"
-                android:textAppearance="@style/TextAppearance.AppCompat"/>
+                android:textAppearance="@style/TextAppearance.AppCompat" />
         </LinearLayout>
 
         <LinearLayout
@@ -51,7 +52,8 @@
                 android:textSize="20sp"
                 android:maxLines="2"
                 android:text="Tanggal"
-                android:textAppearance="@style/TextAppearance.AppCompat"/>
+                android:textAppearance="@style/TextAppearance.AppCompat" />
+
             <TextView
                 android:id="@+id/tanggal"
                 android:layout_width="0dp"
@@ -60,20 +62,41 @@
                 android:textSize="18sp"
                 android:maxLines="3"
                 android:ellipsize="end"
-                android:textAppearance="@style/TextAppearance.AppCompat"/>
+                android:textAppearance="@style/TextAppearance.AppCompat" />
         </LinearLayout>
-        <TextView
-            android:id="@+id/tvLihat"
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:text="Lihat"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/purple_500"
-            android:gravity="center"
-            android:layout_marginEnd="8dp"
-            android:layout_gravity="end"/>
+            android:orientation="horizontal"
+            android:layout_gravity="end">
+
+            <TextView
+                android:id="@+id/tvLihat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="Lihat"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/purple_500"
+                android:gravity="center"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/tvApprove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="Approve"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/green"
+                android:gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

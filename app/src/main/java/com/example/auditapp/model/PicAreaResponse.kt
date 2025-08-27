@@ -18,6 +18,10 @@ data class PicArea(
     val updated_at: String? = null
 ) {
     override fun toString(): String {
-        return karyawan?.emp_name ?: ""
+        return if (id == null && karyawan == null) {
+            "Pilih PIC Area" // Placeholder text for dummy item
+        } else {
+            "${karyawan?.emp_name ?: "Unknown"} (${karyawan?.dept ?: "No Dept"})"
+        }
     }
 }

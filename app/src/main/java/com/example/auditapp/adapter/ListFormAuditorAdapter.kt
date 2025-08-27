@@ -1,5 +1,6 @@
 package com.example.auditapp.adapter
 
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.text.Editable
@@ -7,6 +8,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -15,6 +17,13 @@ import com.example.auditapp.databinding.ListItemFormAuditorAdapterBinding
 import com.example.auditapp.model.DetailAuditAnswer
 import com.example.auditapp.model.DetailFoto
 import com.example.auditapp.model.TertuduhData
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import org.json.JSONArray
+import java.io.IOException
 
 class ListFormAuditorAdapter(
     private val listAuditAnswer: MutableList<DetailAuditAnswer>,
@@ -52,11 +61,67 @@ class ListFormAuditorAdapter(
             }
         }
 
+        private fun searchKaryawan(query: String, binding: ListItemFormAuditorAdapterBinding) {
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                .url("http://124.243.134.244/api/search-karyawan?q=$query")
+                .build()
+
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    e.printStackTrace()
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    val bodu = response.body?.string()
+                    if (!bodu.isNullOrEmpty()) {
+                        val jsonArray = JSONArray(bodu)
+                        val list = mutableListOf<String>()
+
+                        for (i in 0 until jsonArray.length()) {
+                            val obj = jsonArray.getJSONObject(i)
+                            list.add(obj.getString("emp_name"))
+                        }
+
+                        (binding.etTertuduh.context as Activity).runOnUiThread {
+                            val adapter = ArrayAdapter(
+                                binding.etTertuduh.context,
+                                android.R.layout.simple_dropdown_item_1line,
+                                list
+                            )
+                            binding.etTertuduh.setAdapter(adapter)
+                            binding.etTertuduh.showDropDown()
+                        }
+                    }
+                }
+            })
+        }
+
         fun onBindItem(dataDetailAuditAnswer: DetailAuditAnswer) {
             binding.etScore.removeTextChangedListener(scoreTextWatcher)
             if (dataDetailAuditAnswer.listTertuduh == null) {
                 dataDetailAuditAnswer.listTertuduh = mutableListOf()
             }
+
+            binding.etTertuduh.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                    val query = s.toString()
+                    if (query.length >= 1) {
+                        searchKaryawan(query, binding)
+                    }
+                }
+            })
 
             // Setup tertuduh RecyclerView
             val tertuduhList =

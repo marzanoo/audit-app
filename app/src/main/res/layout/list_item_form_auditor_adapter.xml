@@ -103,13 +103,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/etTertuduh"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
-                    android:hint="Tertuduh" />
+                    android:hint="Tertuduh"
+                    android:completionThreshold="1" /> <!-- muncul dropdown setelah ketik 1 huruf -->
 
                 <EditText
                     android:id="@+id/etTemuan"

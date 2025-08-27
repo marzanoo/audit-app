@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.auditapp.R
@@ -165,14 +166,51 @@ class FormAuditorFragment : Fragment() {
             ) {
                 if (response.isSuccessful) {
                     val picAreaList = response.body()?.data ?: emptyList()
-                    val adapter = ArrayAdapter(
+                    // Create a new list with a placeholder item
+                    val modifiedPicAreaList = mutableListOf<PicArea>().apply {
+                        add(PicArea(id = null, karyawan = null)) // Placeholder item
+                        addAll(picAreaList)
+                    }
+                    // Create custom adapter
+                    val adapter = object : ArrayAdapter<PicArea>(
                         requireContext(),
                         android.R.layout.simple_spinner_item,
-                        picAreaList
-                    )
+                        modifiedPicAreaList
+                    ) {
+                        override fun getView(
+                            position: Int,
+                            convertView: View?,
+                            parent: ViewGroup
+                        ): View {
+                            val view = super.getView(position, convertView, parent)
+                            if (position == 0) {
+                                // Customize hint appearance (optional)
+                                (view as TextView).setTextColor(requireContext().getColor(android.R.color.darker_gray))
+                            }
+                            return view
+                        }
+
+                        override fun getDropDownView(
+                            position: Int,
+                            convertView: View?,
+                            parent: ViewGroup
+                        ): View {
+                            val view = super.getDropDownView(position, convertView, parent)
+                            // Hide the hint in the dropdown
+                            if (position == 0) {
+                                view.visibility = View.GONE
+                            }
+                            return view
+                        }
+
+                        override fun isEnabled(position: Int): Boolean {
+                            // Disable the hint item to prevent selection
+                            return position != 0
+                        }
+                    }
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     binding.spinPicArea.adapter = adapter
-
+                    binding.spinPicArea.setSelection(0) // Set default to hint
                 } else {
                     Toast.makeText(
                         requireContext(),
@@ -199,13 +237,52 @@ class FormAuditorFragment : Fragment() {
             override fun onResponse(call: Call<AreaResponse>, response: Response<AreaResponse>) {
                 if (response.isSuccessful) {
                     val areaList = response.body()?.data ?: emptyList()
-                    val adapter = ArrayAdapter(
+                    // Create a new list with a placeholder item
+                    val modifiedAreaList = mutableListOf<Area>().apply {
+                        add(Area(id = 0, area = "Pilih Area")) // Placeholder item
+                        addAll(areaList)
+                    }
+                    // Create custom adapter
+                    val adapter = object : ArrayAdapter<Area>(
                         requireContext(),
                         android.R.layout.simple_spinner_item,
-                        areaList
-                    )
+                        modifiedAreaList
+                    ) {
+                        override fun getView(
+                            position: Int,
+                            convertView: View?,
+                            parent: ViewGroup
+                        ): View {
+                            val view = super.getView(position, convertView, parent)
+                            if (position == 0) {
+                                // Customize hint appearance (optional)
+                                (view as TextView).setTextColor(requireContext().getColor(android.R.color.darker_gray))
+                                (view as TextView).text = "Pilih Area" // Override to match hint
+                            }
+                            return view
+                        }
+
+                        override fun getDropDownView(
+                            position: Int,
+                            convertView: View?,
+                            parent: ViewGroup
+                        ): View {
+                            val view = super.getDropDownView(position, convertView, parent)
+                            // Hide the hint in the dropdown
+                            if (position == 0) {
+                                view.visibility = View.GONE
+                            }
+                            return view
+                        }
+
+                        override fun isEnabled(position: Int): Boolean {
+                            // Disable the hint item to prevent selection
+                            return position != 0
+                        }
+                    }
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     binding.spinArea.adapter = adapter
+                    binding.spinArea.setSelection(0) // Set default to hint
                 } else {
                     Toast.makeText(
                         requireContext(),

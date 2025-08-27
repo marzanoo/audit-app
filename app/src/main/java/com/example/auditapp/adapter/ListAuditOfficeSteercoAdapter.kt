@@ -10,10 +10,12 @@ import com.example.auditapp.model.AuditAnswerItem
 class ListAuditOfficeSteercoAdapter(
     private val listAuditOfficeSteerco: MutableList<AuditAnswerItem>,
     private val listener: OnItemClickListener
-) : RecyclerView.Adapter<ListAuditOfficeSteercoAdapter.ViewHolder>(){
+) : RecyclerView.Adapter<ListAuditOfficeSteercoAdapter.ViewHolder>() {
     interface OnItemClickListener {
         fun onViewClick(dataAuditOfficeSteerco: AuditAnswerItem)
+        fun onApproveClick(dataAuditOfficeSteerco: AuditAnswerItem)
     }
+
     inner class ViewHolder(val binding: ListListAuditOfficeAnswerSteercoAdapterBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBindItem(dataAuditOfficeSteerco: AuditAnswerItem?) {
@@ -22,6 +24,10 @@ class ListAuditOfficeSteercoAdapter(
 
             binding.tvLihat.setOnClickListener {
                 dataAuditOfficeSteerco?.let { listener.onViewClick(it) }
+            }
+
+            binding.tvApprove.setOnClickListener {
+                dataAuditOfficeSteerco?.let { listener.onApproveClick(it) }
             }
         }
     }
@@ -35,7 +41,11 @@ class ListAuditOfficeSteercoAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ListListAuditOfficeAnswerSteercoAdapterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ListListAuditOfficeAnswerSteercoAdapterBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return ViewHolder(binding)
     }
 }

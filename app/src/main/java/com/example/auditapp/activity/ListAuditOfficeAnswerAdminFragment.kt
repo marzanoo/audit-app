@@ -16,12 +16,14 @@ import com.example.auditapp.databinding.FragmentListAuditOfficeAnswerAdminBindin
 import com.example.auditapp.helper.SessionManager
 import com.example.auditapp.model.AuditAnswerItem
 import com.example.auditapp.model.AuditAnswerResponse
+import com.example.auditapp.model.AuditAnswerResponseUpdate
 import com.example.auditapp.model.SingleAreaResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ListAuditOfficeAnswerAdminFragment : Fragment(), ListAuditOfficeAdminAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+class ListAuditOfficeAnswerAdminFragment : Fragment(),
+    ListAuditOfficeAdminAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
     private var _binding: FragmentListAuditOfficeAnswerAdminBinding? = null
     private val binding get() = _binding!!
     private lateinit var sessionManager: SessionManager
@@ -42,7 +44,7 @@ class ListAuditOfficeAnswerAdminFragment : Fragment(), ListAuditOfficeAdminAdapt
         fun newInstance(areaId: Int?): Fragment {
             val fragment = ListAuditOfficeAnswerAdminFragment()
             val args = Bundle()
-            args.putInt(ARG_AREA_ID, areaId?: 0)
+            args.putInt(ARG_AREA_ID, areaId ?: 0)
             fragment.arguments = args
             return fragment
         }
@@ -93,13 +95,18 @@ class ListAuditOfficeAnswerAdminFragment : Fragment(), ListAuditOfficeAdminAdapt
                     binding.tvAreas.text = areaName
                 } else {
                     binding.tvAreas.text = ""
-                    Toast.makeText(requireContext(), "Gagal mengambil data area", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Gagal mengambil data area",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             override fun onFailure(call: Call<SingleAreaResponse>, t: Throwable) {
                 binding.tvAreas.text = ""
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
 
@@ -111,6 +118,54 @@ class ListAuditOfficeAnswerAdminFragment : Fragment(), ListAuditOfficeAdminAdapt
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun onApproveClick(dataAuditOfficeAdmin: AuditAnswerItem) {
+        val token = sessionManager.getAuthToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak tersedia", Toast.LENGTH_SHORT).show()
+            return
+        }
+        apiServices.approveAuditAnswer("Bearer $token", dataAuditOfficeAdmin.id ?: 0)
+            .enqueue(object :
+                Callback<AuditAnswerResponseUpdate> {
+                override fun onResponse(
+                    call: Call<AuditAnswerResponseUpdate>,
+                    response: Response<AuditAnswerResponseUpdate>
+                ) {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        responseBody?.let {
+                            Toast.makeText(
+                                requireContext(),
+                                "Audit Answer Approved",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            loadDataFromApi() // Refresh the list after approval
+                        } ?: run {
+                            Toast.makeText(
+                                requireContext(),
+                                "Response body is null",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Error: ${response.code()} ${response.message()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<AuditAnswerResponseUpdate>, t: Throwable) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Network Error: ${t.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
     }
 
     override fun onRefresh() {
@@ -155,7 +210,8 @@ class ListAuditOfficeAnswerAdminFragment : Fragment(), ListAuditOfficeAdminAdapt
             }
 
             override fun onFailure(call: Call<AuditAnswerResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
     }
