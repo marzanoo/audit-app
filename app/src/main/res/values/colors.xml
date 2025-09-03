@@ -8,4 +8,5 @@
     <color name="grey_slate">#f2fdff</color>
     <color name="grey_slate2">#bbbbbb</color>
     <color name="hint_color">#808080</color>
+    <color name="blue">#0000FF</color>
 </resources>

@@ -49,22 +49,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
-                android:text="+ Tambah Area"
+                android:text="+ Tambah PIC Area"
                 android:gravity="center"
                 android:backgroundTint="@color/black"
-                android:id="@+id/btnTambahArea" />
+                android:id="@+id/btnTambahPicArea" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="List PIC Area"
+                android:text="Rolling PIC Area"
                 android:gravity="center"
                 android:backgroundTint="@color/blue"
                 android:id="@+id/btnPICArea" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_area"
+            android:id="@+id/rv_picArea"
             android:layout_width="match_parent"
             android:layout_marginTop="10dp"
             android:layout_height="wrap_content" />

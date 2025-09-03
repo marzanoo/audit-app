@@ -27,6 +27,7 @@ import com.example.auditapp.model.OtpRequest
 import com.example.auditapp.model.OtpResponse
 import com.example.auditapp.model.PaymentRequest
 import com.example.auditapp.model.PaymentResponse
+import com.example.auditapp.model.PicArea
 import com.example.auditapp.model.PicAreaResponse
 import com.example.auditapp.model.RegisterRequest
 import com.example.auditapp.model.RegisterResponse
@@ -39,6 +40,7 @@ import com.example.auditapp.model.TemaForm
 import com.example.auditapp.model.TemaFormResponse
 import com.example.auditapp.model.UpdateAreaResponse
 import com.example.auditapp.model.UpdateFormResponse
+import com.example.auditapp.model.UpdatePicAreaResponse
 import com.example.auditapp.model.UpdateTemaFormResponse
 import com.example.auditapp.model.UpdateVariabelFormResponse
 import com.example.auditapp.model.UserResponseGetById
@@ -148,9 +150,42 @@ interface ApiServices {
     @GET("pic-area")
     fun getPicArea(@Header("Authorization") token: String): Call<PicAreaResponse>
 
+    @DELETE("pic-area/{id}")
+    fun deletePicArea(@Header("Authorization") token: String, @Path("id") id: Int): Call<Void>
+
+    @POST("pic-area")
+    fun createPicArea(
+        @Header("Authorization") token: String,
+        @Body picArea: PicArea
+    ): Call<UpdatePicAreaResponse>
+
+    @GET("candidate-pic")
+    fun getCandidatePic(@Header("Authorization") token: String): Call<KaryawanResponse>
+
+    @GET("pic-area-single/{id}")
+    fun getPicAreaById(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<UpdatePicAreaResponse>
+
+    @PUT("pic-area/{id}")
+    fun updatePicArea(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int,
+        @Body picArea: PicArea
+    ): Call<UpdatePicAreaResponse>
+
+    @GET("rolling-pic")
+    fun rollingPic(
+        @Header("Authorization") token: String
+    ): Call<PicAreaResponse>
+
     //Karyawan
     @GET("karyawan-pic")
     fun getKaryawanPic(@Header("Authorization") token: String): Call<KaryawanResponse>
+
+    @GET("karyawan")
+    fun getKaryawan(@Header("Authorization") token: String): Call<KaryawanResponse>
 
     //Form
     @GET("form")

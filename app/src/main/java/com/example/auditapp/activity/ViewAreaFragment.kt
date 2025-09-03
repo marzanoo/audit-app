@@ -22,7 +22,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ViewAreaFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, AreaAdapter.OnItemClickListener {
+class ViewAreaFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener,
+    AreaAdapter.OnItemClickListener {
     private var _binding: FragmentViewAreaBinding? = null
     private val binding get() = _binding!!
     private lateinit var areaAdapter: AreaAdapter
@@ -62,6 +63,14 @@ class ViewAreaFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, AreaA
                 .commit()
         }
 
+        binding.btnPICArea.setOnClickListener {
+            val fragment = PicAreaFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
         setupRecylerView()
         loadDataFromApi()
     }
@@ -84,17 +93,25 @@ class ViewAreaFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, AreaA
                     Log.d("ViewAreaFragment", "Response: $responseData")
                     response.body()?.let {
                         listArea.clear()
-                        listArea.addAll(it.data?: emptyList())
+                        listArea.addAll(it.data ?: emptyList())
                         areaAdapter.notifyDataSetChanged()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Gagal mengambil data area", Toast.LENGTH_SHORT).show()
-                    Log.e("ViewAreaFragment", "Gagal mengambil data area: ${response.errorBody()?.string()}")
+                    Toast.makeText(
+                        requireContext(),
+                        "Gagal mengambil data area",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Log.e(
+                        "ViewAreaFragment",
+                        "Gagal mengambil data area: ${response.errorBody()?.string()}"
+                    )
                 }
             }
 
             override fun onFailure(call: Call<AreaResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
                 Log.e("ViewAreaFragment", "Network Error: ${t.message}")
             }
         })
@@ -135,14 +152,17 @@ class ViewAreaFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, AreaA
                 if (response.isSuccessful) {
                     areaAdapter.deleteArea(dataArea)
                     areaAdapter.notifyDataSetChanged()
-                    Toast.makeText(requireContext(), "Area berhasil dihapus", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Area berhasil dihapus", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
-                    Toast.makeText(requireContext(), "Gagal menghapus area", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Gagal menghapus area", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
     }
